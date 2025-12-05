@@ -1,15 +1,59 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Created by Gemini as a temporal placeholder
+
+# Sensitive files
+google-services.json
+
+# Built application files
+*.apk
+*.aab
+*.ap_
+*.a_
+*.apks
+*.dex
+*.class
+
+# Folders containing generated code
+*/build/
+
+# Local configuration files
 local.properties
+
+# Log files
+*.log
+
+# Keystore files
+*.jks
+*.keystore
+
+# Android Studio IDE files
+.gradle/
+.idea/
+*.iml
+*.hprof
+.cxx/
+captures/
+.externalNativeBuild/
+atlassian-ide-plugin.xml
+
+# macOS specific files
+.DS_Store
+
+# Gradle files
+gradle/
+gradlew
+gradlew.bat
+build.gradle.kts.orig
+settings.gradle.kts.orig
+gradle.properties.orig
+
+# Test results
+/app/build/reports/
+/app/build/test-results/
+
+# Lint results
+/app/build/outputs/lint-results-debug.html
+/app/build/outputs/lint-results-release.html
+
+# Kapt generated files
+/app/build/generated/source/kapt/
+/app/build/generated/source/kaptKotlin/
