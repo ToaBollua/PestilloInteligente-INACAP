@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H0P3 // MEMORIA TÁCTICA // PESTILLO INTELIGENTE (TI3042)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #020402;
+            --panel-bg: #050a06;
+            --panel-border: #143823;
+            --neon-green: #00ff41;
+            --neon-green-glow: rgba(0, 255, 65, 0.4);
+            --neon-cyan: #00e5ff;
+            --neon-amber: #ffb000;
+            --neon-red: #ff003c;
+            --text-primary: #d0f0d8;
+            --text-dim: #4d7a5b;
+            --font-mono: "Fira Code", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            padding: 24px;
+            font-size: 13px;
+            line-height: 1.6;
+            background-image: 
+                linear-gradient(rgba(0, 255, 65, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            border: 2px solid var(--neon-green);
+            background-color: var(--panel-bg);
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+            position: relative;
+        }
+
+        .container::before {
+            content: "TI3042 // INACAP // DOSSIER DE CONVERGENCIA IoT";
+            position: absolute;
+            top: -12px;
+            right: 25px;
+            background-color: var(--neon-green);
+            color: #000;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 10px;
+            border-radius: 2px;
+            letter-spacing: 1px;
+        }
+
+        header {
+            border-bottom: 2px dashed var(--neon-green);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 20px;
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green-glow);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            color: var(--neon-cyan);
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .metadata-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            border: 1px solid var(--panel-border);
+            margin-top: 10px;
+        }
+
+        .metadata-table td {
+            padding: 8px 12px;
+            border: 1px solid var(--panel-border);
+        }
+
+        .metadata-table td.label {
+            color: var(--neon-cyan);
+            font-weight: bold;
+            width: 22%;
+            background: rgba(0, 229, 255, 0.03);
+        }
+
+        .section-title {
+            color: var(--neon-cyan);
+            font-size: 15px;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--neon-cyan);
+            padding-bottom: 6px;
+            margin: 30px 0 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+        }
+
+        .pulse-led {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .pulse-led.green {
+            background-color: var(--neon-green);
+            box-shadow: 0 0 8px var(--neon-green);
+            animation: pulse-green 1.2s infinite;
+        }
+
+        .pulse-led.amber {
+            background-color: var(--neon-amber);
+            box-shadow: 0 0 8px var(--neon-amber);
+            animation: pulse-amber 1.2s infinite;
+        }
+
+        .pulse-led.red {
+            background-color: var(--neon-red);
+            box-shadow: 0 0 8px var(--neon-red);
+            animation: pulse-red 1.2s infinite;
+        }
+
+        @keyframes pulse-green { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+        @keyframes pulse-amber { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+        @keyframes pulse-red { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+
+        .card {
+            background: rgba(0, 255, 65, 0.015);
+            border: 1px solid var(--panel-border);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .card-header {
+            font-size: 13.5px;
+            color: var(--neon-green);
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border: 1px solid;
+            border-radius: 2px;
+            text-transform: uppercase;
+        }
+
+        .badge.green { color: var(--neon-green); border-color: var(--neon-green); background: rgba(0, 255, 65, 0.08); }
+        .badge.cyan { color: var(--neon-cyan); border-color: var(--neon-cyan); background: rgba(0, 229, 255, 0.08); }
+        .badge.amber { color: var(--neon-amber); border-color: var(--neon-amber); background: rgba(255, 176, 0, 0.08); }
+        .badge.red { color: var(--neon-red); border-color: var(--neon-red); background: rgba(255, 0, 60, 0.08); }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin: 12px 0;
+        }
+
+        table.data-table th, table.data-table td {
+            border: 1px solid var(--panel-border);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        table.data-table th {
+            background: rgba(0, 255, 65, 0.05);
+            color: var(--neon-green);
+        }
+
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        code {
+            background: #000;
+            border: 1px solid #143823;
+            color: var(--neon-cyan);
+            padding: 2px 5px;
+            font-size: 11.5px;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        .alert-box {
+            background: rgba(255, 176, 0, 0.05);
+            border-left: 4px solid var(--neon-amber);
+            padding: 12px;
+            margin: 12px 0;
+            font-size: 12px;
+        }
+
+        .critical-box {
+            background: rgba(255, 0, 60, 0.05);
+            border-left: 4px solid var(--neon-red);
+            padding: 12px;
+            margin: 12px 0;
+            font-size: 12px;
+        }
+
+        .success-box {
+            background: rgba(0, 255, 65, 0.05);
+            border-left: 4px solid var(--neon-green);
+            padding: 12px;
+            margin: 12px 0;
+            font-size: 12px;
+        }
+
+        footer {
+            margin-top: 35px;
+            border-top: 1px dashed var(--panel-border);
+            padding-top: 16px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>DOSSIER TÉCNICO Y MEMORIA EVOLUTIVA: PESTILLO INTELIGENTE IoT</h1>
+        <div class="subtitle">Análisis Forense de Hardware, Firmware Distribuido ESP-NOW y Feedback de Evaluación (TI3042 - INACAP)</div>
+        
+        <table class="metadata-table">
+            <tr>
+                <td class="label">Asignatura:</td>
+                <td>Aplicaciones Móviles para IoT (TI3042)</td>
+                <td class="label">Unidad Académica:</td>
+                <td>Unidad 1 (Smart Devices) ➔ Unidad 2 (Android Studio / Kotlin)</td>
+            </tr>
+            <tr>
+                <td class="label">Integrantes:</td>
+                <td>Nicolás Anrique (Bollua) // Camilo Nuñez // Diego Ibeas</td>
+                <td class="label">Ponderación / Tipo:</td>
+                <td><span class="badge green">Evaluación Formativa 1 (EF1) ➔ Sumativa (ES)</span></td>
+            </tr>
+            <tr>
+                <td class="label">Topología Hardware:</td>
+                <td><span class="badge cyan">Dual ESP32 (Sensor Exterior + Actuador Air-Gapped)</span></td>
+                <td class="label">Protocolos:</td>
+                <td><code>ESP-NOW (HMAC-SHA256)</code> + <code>Firebase REST (HTTPS/TLS)</code></td>
+            </tr>
+        </table>
+    </header>
+
+    <!-- SECCIÓN I: CRONOLOGÍA DE DESARROLLO -->
+    <div class="section-title">
+        <div class="pulse-led green"></div>
+        I. CRONOLOGÍA EVOLUTIVA DEL PROYECTO (DE MONO-NODO A DUAL-NODE)
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span>Fase 1: El Incidente del Pulsador Físico (Mono-Nodo Arduino/ESP32)</span>
+            <span class="badge red">FALLO DE HARDWARE RESUELTO</span>
+        </div>
+        <p>
+            El prototipo inicial (<code>PestilloInteligente.ino</code>) buscaba operar con un pulsador de entrada, dos LEDs y un micro-servomotor SG90.
+        </p>
+        <div class="critical-box">
+            <strong>Causa Raíz Documentada en BITACORA.md:</strong> El pulsador físico insertado en la protoboard generaba un cortocircuito mecánico permanente a GND, forzando el Pin de entrada a <code>LOW</code> constante. Las pruebas de aislamiento demostraron que el componente funcionaba puenteado en el aire pero colapsaba mecánicamente sobre las pistas de la placa.
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span>Fase 2: Transición a Sensor Ultrasónico HC-SR04 y Cloud REST</span>
+            <span class="badge amber">REFACTORIZACIÓN FUNCIONAL</span>
+        </div>
+        <ul>
+            <li><strong>Egreso Libre (Request-to-Exit):</strong> Se reemplazó el pulsador por el sensor ultrasónico <code>HC-SR04</code> (Trigger en GPIO 5, Echo en GPIO 19). Si detecta presencia interior a <code>&lt; 8 cm</code>, abre automáticamente sin esperar conexión ni autenticación de red (Safety / Seguridad Humana).</li>
+            <li><strong>Enlace Firebase Realtime DB:</strong> Conexión HTTPS hacia <code>https://pestillo-inteligente-default-rtdb.firebaseio.com/</code> consultando <code>is_authorized.json</code>.</li>
+            <li><strong>Parche Crítico de SSL:</strong> Se erradicó el uso inseguro de <code>setInsecure()</code> en <code>WiFiClientSecure</code>, inyectando la validación del certificado raíz GTS Root R1 de Google Trust Services.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span>Fase 3: Arquitectura Distribuida Segura de Dos Nodos (ESP-NOW)</span>
+            <span class="badge green">ARQUITECTURA DEFENSIVA EF1</span>
+        </div>
+        <p>Para mitigar el vector de ataque de <em>Manipulación Física del Bus de Actuación</em> (donde un atacante exterior arranca el sensor y puentea el cable del servo para abrir la puerta), se dividió el sistema en dos microcontroladores:</p>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Nodo / Rol</th>
+                    <th>Ubicación Física</th>
+                    <th>Interfaces / Periféricos</th>
+                    <th>Funciones de Seguridad</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Nodo 1: ESP32_Sensor</strong></td>
+                    <td>Exterior de la puerta (Perímetro)</td>
+                    <td>HC-SR04, Wi-Fi 802.11 b/g/n, ESP-NOW</td>
+                    <td>Lee ultrasonido, sondea Firebase REST con TLS, y transmite tramas ESP-NOW firmadas con <code>HMAC-SHA256</code> y contador anti-replay.</td>
+                </tr>
+                <tr>
+                    <td><strong>Nodo 2: ESP32_Actuador</strong></td>
+                    <td>Interior del chasis (Zona Segura)</td>
+                    <td>Servo SG90 (LEDC GPIO 18), LED Rojo (GPIO 23), LED Verde (GPIO 22), Capacitor 100µF</td>
+                    <td><strong>Air-gapped (Sin Wi-Fi WAN).</strong> Valida la firma criptográfica ESP-NOW y manipula el PWM nativo (50Hz, 10-bit). Resorte mecánico Fail-Secure retorna el pestillo a 0° ante corte de luz.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SECCIÓN II: HARDWARE, MATEMÁTICAS Y PWM -->
+    <div class="section-title">
+        <div class="pulse-led cyan"></div>
+        II. ESPECIFICACIÓN FÍSICA Y PWM (ESP32 LEDC)
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span>Matemáticas de Modulación de Ancho de Pulso (SG90 / MG90S)</span>
+            <span class="badge cyan">LEDC 10-BIT // 50 Hz</span>
+        </div>
+        <p>A diferencia de Arduino UNO (librería bloqueante <code>Servo.h</code>), en ESP32 se utiliza el hardware timer nativo <code>ledcAttach</code> / <code>ledcWrite</code>:</p>
+        <ul>
+            <li><strong>Frecuencia de Operación:</strong> <code>f = 50 Hz</code> ➔ <strong>Periodo:</strong> <code>T = 20 ms (20,000 µs)</code></li>
+            <li><strong>Resolución:</strong> <code>10 bits</code> ➔ <code>2^10 = 1024 niveles (0 a 1023)</code></li>
+            <li><strong>Posición 0° (Bloqueado / Cerrojo extendido):</strong> Pulso de <code>0.5 ms</code> ➔ <code>Duty = (0.5 / 20.0) * 1024 ≈ 26</code></li>
+            <li><strong>Posición 90° (Desbloqueado / Cerrojo retraído):</strong> Pulso de <code>1.45 ms</code> ➔ <code>Duty = (1.45 / 20.0) * 1024 ≈ 74</code></li>
+            <li><strong>Capacitor de Desacoplamiento:</strong> <code>100 µF / 16V</code> en paralelo con la alimentación del servo para suprimir caídas de tensión inductivas (Brownout Reset).</li>
+        </ul>
+    </div>
+
+    <!-- SECCIÓN III: VECTORES DE SEGURIDAD Y MITIGACIONES -->
+    <div class="section-title">
+        <div class="pulse-led amber"></div>
+        III. MATRIZ DE VECTORES DE ATAQUE Y CONTRAMEDIDAS
+    </div>
+
+    <div class="card">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Vector de Ataque</th>
+                    <th>Impacto Potencial</th>
+                    <th>Contramedida Implementada en Firmware</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Man-in-the-Middle (MitM) en Firebase</strong></td>
+                    <td>Intercepción y falsificación del estado <code>is_authorized</code>.</td>
+                    <td>Canal HTTPS estricto con validación de certificado raíz X.509 de Google Trust Services (GTS Root R1).</td>
+                </tr>
+                <tr>
+                    <td><strong>Ataque de Replay por Radiofrecuencia (ESP-NOW)</strong></td>
+                    <td>Captura de paquetes inalámbricos de apertura y retransmisión para abrir la puerta.</td>
+                    <td>Criptografía simétrica <strong>HMAC-SHA256</strong> con clave secreta compartida y contador incremental monotónico (Nonce/Seq). Paquetes duplicados o con seq &le; last_seq son descartados de inmediato.</td>
+                </tr>
+                <tr>
+                    <td><strong>Sabotaje Físico Perimetral</strong></td>
+                    <td>Desprendimiento del sensor exterior para acceder a los cables de control.</td>
+                    <td>Aislamiento de dos nodos. El cable del servomotor no cruza hacia el exterior; reside exclusivamente dentro del marco interior bajo control del Nodo 2.</td>
+                </tr>
+                <tr>
+                    <td><strong>Fallo de Energía / Blackout</strong></td>
+                    <td>Puerta queda abierta o motor sin retención mecánica.</td>
+                    <td><strong>Fail-Secure Físico:</strong> Resorte mecánico pasivo que traba el pestillo al cesar la energía electromagnética del servo.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SECCIÓN IV: FEEDBACK DEL PROFESOR Y PUNTOS A REFINAR -->
+    <div class="section-title">
+        <div class="pulse-led red"></div>
+        IV. FEEDBACK DEL PROFESOR Y PUNTOS DE REFINAMIENTO PENDIENTES
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span>Vectores Clave a Evaluar / Refinar para Unidad 2 & 3 (Android / Kotlin)</span>
+            <span class="badge amber">CHECKLIST TÁCTICO</span>
+        </div>
+        <ul>
+            <li><strong>1. Integración con App Móvil Android (Kotlin):</strong> La evaluación de la Unidad 2 exige conectar la interfaz móvil nativa de Android Studio directamente a Firebase (o MQTT broker) para autenticar al usuario y conmutar el campo <code>is_authorized</code> en tiempo real.</li>
+            <li><strong>2. Manejo de Secretos en Firmware:</strong> Trasladar los tokens de Firebase y la clave secreta HMAC desde constantes hardcodeadas hacia el almacenamiento seguro NVS (Non-Volatile Storage) o Preferences encriptadas.</li>
+            <li><strong>3. Telemetría de Estado Inverso:</strong> Permitir que el Nodo Actuador reporte hacia el Nodo Sensor (vía ESP-NOW bidireccional) el estado real de la puerta (Abierta, Cerrada, Intento Forzado) para actualizar Firebase y reflejarlo en la App móvil.</li>
+            <li><strong>4. Simulación Completa Wokwi:</strong> Mantener sincronizado el archivo <code>diagram.json</code> con ambos ESP32, el HC-SR04 y el Servo para demostraciones remotas sin hardware físico.</li>
+        </ul>
+    </div>
+
+    <footer>
+        H0P3 KERNEL // DOSSIER TI3042 // INACAP // PESTILLO INTELIGENTE DUAL ESP32 // LISTO PARA DESPLIEGUE
+    </footer>
+</div>
+
+</body>
+</html>
