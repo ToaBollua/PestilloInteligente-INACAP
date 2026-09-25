@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" width="1400" height="900" style="background:#0a0e14; font-family:'Fira Code', monospace;">
+  <defs>
+    <linearGradient id="cyberGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00FF66"/>
+      <stop offset="100%" stop-color="#00B347"/>
+    </linearGradient>
+    <linearGradient id="cyberBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F0FF"/>
+      <stop offset="100%" stop-color="#0077AA"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#161f2c"/>
+      <stop offset="100%" stop-color="#0e1520"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Header -->
+  <rect x="20" y="20" width="1360" height="70" rx="8" fill="#121a24" stroke="#00FF66" stroke-width="2"/>
+  <text x="50" y="62" fill="#00FF66" font-size="24" font-weight="bold" filter="url(#glow)">PESTILLO INTELIGENTE IoT — MOCKUP DE FLUJO DE PANTALLAS (UNIDAD 2)</text>
+  <text x="1060" y="60" fill="#8892b0" font-size="14">TI3042 · INACAP · Kotlin + Compose + Firestore</text>
+
+  <!-- PANTALLA 1: LOGIN -->
+  <g transform="translate(50, 120)">
+    <!-- Phone Frame -->
+    <rect x="0" y="0" width="280" height="520" rx="24" fill="#0b0f17" stroke="#303c4f" stroke-width="3"/>
+    <rect x="100" y="10" width="80" height="14" rx="7" fill="#1b2533"/>
+    <!-- Screen Content -->
+    <rect x="15" y="35" width="250" height="465" rx="12" fill="#121820"/>
+    <rect x="15" y="35" width="250" height="45" rx="12" fill="#1e293b"/>
+    <text x="30" y="62" fill="#00FF66" font-size="12" font-weight="bold">Pestillo IoT — Autenticación</text>
+    
+    <!-- Shield Icon -->
+    <circle cx="140" cy="120" r="28" fill="#1b2838" stroke="#00FF66" stroke-width="2"/>
+    <text x="130" y="127" fill="#00FF66" font-size="20">🔒</text>
+    <text x="60" y="170" fill="#ffffff" font-size="14" font-weight="bold">Acceso al Sistema</text>
+    <text x="50" y="186" fill="#64748b" font-size="10">Control Seguro ISO/IEC 27400</text>
+    
+    <!-- Fields -->
+    <rect x="35" y="210" width="210" height="40" rx="6" fill="#1e293b" stroke="#334155"/>
+    <text x="45" y="235" fill="#94a3b8" font-size="11">operador@inacap.cl</text>
+    
+    <rect x="35" y="260" width="210" height="40" rx="6" fill="#1e293b" stroke="#334155"/>
+    <text x="45" y="285" fill="#94a3b8" font-size="11">••••••••</text>
+    
+    <!-- Login Button -->
+    <rect x="35" y="320" width="210" height="42" rx="8" fill="url(#cyberGreen)"/>
+    <text x="85" y="346" fill="#000000" font-size="13" font-weight="bold">Iniciar Sesión</text>
+
+    <!-- Subtitle -->
+    <text x="65" y="560" fill="#00FF66" font-size="14" font-weight="bold">1. PantallaLogin</text>
+    <text x="45" y="580" fill="#8892b0" font-size="11">Firebase Auth (RBAC Operador/Obs)</text>
+  </g>
+
+  <!-- PANTALLA 2: CONEXIÓN -->
+  <g transform="translate(370, 120)">
+    <rect x="0" y="0" width="280" height="520" rx="24" fill="#0b0f17" stroke="#303c4f" stroke-width="3"/>
+    <rect x="100" y="10" width="80" height="14" rx="7" fill="#1b2533"/>
+    <rect x="15" y="35" width="250" height="465" rx="12" fill="#121820"/>
+    <rect x="15" y="35" width="250" height="45" rx="12" fill="#1e293b"/>
+    <text x="30" y="62" fill="#00F0FF" font-size="12" font-weight="bold">Configuración de Enlace</text>
+    
+    <!-- User Badge -->
+    <rect x="30" y="95" width="220" height="35" rx="6" fill="#1e293b" stroke="#00F0FF" stroke-width="1"/>
+    <text x="40" y="117" fill="#00F0FF" font-size="11" font-weight="bold">Perfil: OPERADOR (Control Total)</text>
+
+    <!-- Mode Chips -->
+    <text x="30" y="150" fill="#ffffff" font-size="11" font-weight="bold">Modo Operativo:</text>
+    <rect x="30" y="160" width="105" height="30" rx="15" fill="#1e293b" stroke="#334155"/>
+    <text x="42" y="180" fill="#94a3b8" font-size="10">Nodo IoT</text>
+    <rect x="145" y="160" width="105" height="30" rx="15" fill="#00F0FF"/>
+    <text x="155" y="180" fill="#000000" font-size="10" font-weight="bold">Panel Control</text>
+
+    <!-- Medium Chips -->
+    <text x="30" y="210" fill="#ffffff" font-size="11" font-weight="bold">Medio de Enlace:</text>
+    <rect x="30" y="220" width="105" height="30" rx="15" fill="#00FF66"/>
+    <text x="40" y="240" fill="#000000" font-size="10" font-weight="bold">Bluetooth</text>
+    <rect x="145" y="220" width="105" height="30" rx="15" fill="#1e293b" stroke="#334155"/>
+    <text x="160" y="240" fill="#94a3b8" font-size="10">Wi-Fi TCP</text>
+
+    <!-- Dest and PIN -->
+    <rect x="30" y="265" width="220" height="35" rx="6" fill="#1e293b"/>
+    <text x="40" y="287" fill="#94a3b8" font-size="11">MAC: 00:11:22:33:44:55</text>
+    <rect x="30" y="310" width="220" height="35" rx="6" fill="#1e293b"/>
+    <text x="40" y="332" fill="#94a3b8" font-size="11">PIN Cifrado: 123456</text>
+
+    <!-- Connect Button -->
+    <rect x="30" y="360" width="220" height="42" rx="8" fill="url(#cyberBlue)"/>
+    <text x="65" y="386" fill="#000000" font-size="13" font-weight="bold">Conectar al Nodo</text>
+
+    <text x="50" y="560" fill="#00F0FF" font-size="14" font-weight="bold">2. PantallaConexion</text>
+    <text x="40" y="580" fill="#8892b0" font-size="11">Selector RFCOMM / TCP 5050</text>
+  </g>
+
+  <!-- PANTALLA 3: NODO IOT -->
+  <g transform="translate(690, 120)">
+    <rect x="0" y="0" width="280" height="520" rx="24" fill="#0b0f17" stroke="#303c4f" stroke-width="3"/>
+    <rect x="100" y="10" width="80" height="14" rx="7" fill="#1b2533"/>
+    <rect x="15" y="35" width="250" height="465" rx="12" fill="#121820"/>
+    <rect x="15" y="35" width="250" height="45" rx="12" fill="#1e293b"/>
+    <text x="30" y="62" fill="#00FF66" font-size="12" font-weight="bold">Nodo IoT — Cerradura</text>
+    
+    <!-- State Badge -->
+    <rect x="30" y="90" width="220" height="28" rx="6" fill="#064e3b"/>
+    <circle cx="45" cy="104" r="5" fill="#00FF66"/>
+    <text x="58" y="108" fill="#00FF66" font-size="11" font-weight="bold">CONECTADO (RFCOMM)</text>
+
+    <!-- Servo Box -->
+    <rect x="30" y="125" width="220" height="90" rx="10" fill="#1b2533" stroke="#00FF66" stroke-width="1"/>
+    <text x="125" y="155" fill="#00FF66" font-size="28">🔓</text>
+    <text x="55" y="180" fill="#00FF66" font-size="12" font-weight="bold">DESTRIABADO (90° - 3s)</text>
+    <text x="65" y="198" fill="#64748b" font-size="9">Fail-Secure: Auto-cierre activo</text>
+
+    <!-- Sensor Slider Box -->
+    <rect x="30" y="225" width="220" height="80" rx="10" fill="#1e293b"/>
+    <text x="40" y="245" fill="#ffffff" font-size="11" font-weight="bold">Sensor Ultrasónico HC-SR04</text>
+    <text x="40" y="262" fill="#00F0FF" font-size="11">Distancia: 4.2 cm (&lt; 8cm)</text>
+    <rect x="40" y="275" width="200" height="6" rx="3" fill="#334155"/>
+    <rect x="40" y="275" width="40" height="6" rx="3" fill="#FF0055"/>
+
+    <!-- Action Buttons -->
+    <rect x="30" y="315" width="105" height="35" rx="6" fill="#00FF66"/>
+    <text x="40" y="337" fill="#000000" font-size="10" font-weight="bold">Abrir Manual</text>
+    <rect x="145" y="315" width="105" height="35" rx="6" fill="#1e293b" stroke="#e11d48"/>
+    <text x="155" y="337" fill="#e11d48" font-size="10" font-weight="bold">Bloquear (0°)</text>
+
+    <!-- Log terminal -->
+    <rect x="30" y="360" width="220" height="110" rx="6" fill="#090d13" stroke="#1e293b"/>
+    <text x="35" y="378" fill="#00FF66" font-size="8">> CMD;latch;OPEN [OK]</text>
+    <text x="35" y="392" fill="#8892b0" font-size="8">> ACK;latch;OPEN</text>
+    <text x="35" y="406" fill="#00F0FF" font-size="8">> LECTURA;dist;4.2</text>
+    <text x="35" y="420" fill="#f59e0b" font-size="8">> Firestore: Log enviado</text>
+
+    <text x="60" y="560" fill="#00FF66" font-size="14" font-weight="bold">3. PantallaNodo</text>
+    <text x="40" y="580" fill="#8892b0" font-size="11">Simulador Sensor/Actuador OT</text>
+  </g>
+
+  <!-- PANTALLA 4: PANEL DE CONTROL -->
+  <g transform="translate(1010, 120)">
+    <rect x="0" y="0" width="280" height="520" rx="24" fill="#0b0f17" stroke="#303c4f" stroke-width="3"/>
+    <rect x="100" y="10" width="80" height="14" rx="7" fill="#1b2533"/>
+    <rect x="15" y="35" width="250" height="465" rx="12" fill="#121820"/>
+    <rect x="15" y="35" width="250" height="45" rx="12" fill="#1e293b"/>
+    <text x="30" y="62" fill="#00F0FF" font-size="12" font-weight="bold">Panel Control — Operador</text>
+    <text x="235" y="62" fill="#00F0FF" font-size="14">📜</text>
+    
+    <!-- State Badge -->
+    <rect x="30" y="90" width="220" height="28" rx="6" fill="#064e3b"/>
+    <circle cx="45" cy="104" r="5" fill="#00FF66"/>
+    <text x="58" y="108" fill="#00FF66" font-size="11" font-weight="bold">CONECTADO · ROL: OPERADOR</text>
+
+    <!-- Telemetry Display -->
+    <rect x="30" y="125" width="220" height="110" rx="10" fill="#1b2533" stroke="#00F0FF" stroke-width="1"/>
+    <text x="125" y="165" fill="#00F0FF" font-size="32">🔒</text>
+    <text x="65" y="195" fill="#ffffff" font-size="13" font-weight="bold">CERROJO BLOQUEADO</text>
+    <text x="58" y="215" fill="#00F0FF" font-size="11">Distancia Exterior: 45.0 cm</text>
+
+    <!-- Big Action Button -->
+    <rect x="30" y="250" width="220" height="55" rx="12" fill="url(#cyberGreen)"/>
+    <text x="45" y="283" fill="#000000" font-size="13" font-weight="bold">🔓 DESTRAMPAR PESTILLO (3s)</text>
+
+    <!-- Realtime Firestore card -->
+    <rect x="30" y="320" width="220" height="150" rx="8" fill="#151d28" stroke="#1e293b"/>
+    <text x="40" y="340" fill="#00F0FF" font-size="10" font-weight="bold">ÚLTIMOS ACCESOS (FIRESTORE):</text>
+    <text x="40" y="360" fill="#94a3b8" font-size="9">14:52:49 · APERTURA_REMOTA</text>
+    <text x="40" y="375" fill="#64748b" font-size="8">  operador@inacap.cl · 4.5 cm</text>
+    <text x="40" y="395" fill="#94a3b8" font-size="9">14:51:10 · PROXIMIDAD_LOCAL</text>
+    <text x="40" y="410" fill="#64748b" font-size="8">  Sensor HC-SR04 (&lt; 8cm)</text>
+    <text x="40" y="430" fill="#e11d48" font-size="9">14:50:02 · BLOQUEO_FAILSAFE</text>
+    <text x="40" y="445" fill="#64748b" font-size="8">  Retorno seguro tras corte</text>
+
+    <text x="50" y="560" fill="#00F0FF" font-size="14" font-weight="bold">4. PantallaPanel</text>
+    <text x="40" y="580" fill="#8892b0" font-size="11">Apertura RBAC + Firestore Log</text>
+  </g>
+
+  <!-- Flow Arrows -->
+  <path d="M 340 380 L 360 380" stroke="#00FF66" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M 660 380 L 680 380" stroke="#00FF66" stroke-width="2"/>
+  <path d="M 980 380 L 1000 380" stroke="#00FF66" stroke-width="2"/>
+
+  <!-- Footer Banner -->
+  <rect x="50" y="630" width="1300" height="230" rx="10" fill="#121824" stroke="#1e293b"/>
+  <text x="80" y="665" fill="#00FF66" font-size="16" font-weight="bold">TRAZABILIDAD Y CUMPLIMIENTO DE CRITERIOS (UNIDAD 2 TI3042 - INACAP)</text>
+  
+  <text x="80" y="700" fill="#ffffff" font-size="13">• <tspan fill="#00FF66">2.1.1 Identifica herramientas:</tspan> Kotlin DSL, Jetpack Compose Material 3, AndroidX Core, Firebase BoM v33.7.0.</text>
+  <text x="80" y="730" fill="#ffffff" font-size="13">• <tspan fill="#00FF66">2.1.2 Produce app móvil:</tspan> Bluetooth RFCOMM (SPP) y Wi-Fi TCP (Puerto 5050), tramas estructuradas TIPO;CLAVE;VALOR.</text>
+  <text x="80" y="760" fill="#ffffff" font-size="13">• <tspan fill="#00FF66">2.1.3 Emplea estándar ISO:</tspan> ISO/IEC 27400:2022 (AES-256-GCM + PBKDF2), RBAC Operador/Observador, IEC 62443 Fail-Secure (0°).</text>
+  <text x="80" y="790" fill="#ffffff" font-size="13">• <tspan fill="#00FF66">2.1.4 Demuestra interconexión:</tspan> 2 teléfonos Android + Gateway virtual/físico ESP32 con sensor HC-SR04 y servo SG90.</text>
+  <text x="80" y="825" fill="#8892b0" font-size="12">Desarrollado y verificado por Nicolás Anrique (Bollua) — Repositorio Git listo para entrega.</text>
+</svg>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "926658692413",
+    "project_id": "pestillo-iot-inacap",
+    "storage_bucket": "pestillo-iot-inacap.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926658692413:android:0f7ce5a8adc0cbeddb3154",
+        "android_client_info": {
+          "package_name": "cl.inacap.pestilloiot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyPLACEHOLDER_FOR_LOCAL_BUILD_ONLY_0000"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

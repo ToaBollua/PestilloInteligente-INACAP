@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Pestillo IoT</string>
+    <string name="canal_alertas_nombre">Alertas de Pestillo IoT</string>
+    <string name="canal_alertas_desc">Notificaciones de alta prioridad para aperturas y desconexiones</string>
+</resources>

@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = "PestilloInteligente_ES1.ino"
+elf = "build/PestilloInteligente_ES1.ino.elf"
