@@ -23,6 +23,7 @@ import os
 import sys
 import base64
 import urllib.parse
+import urllib.request
 from virtual_esp32_gateway import (
     SimuladorESP32,
     derivar_clave_aes,
@@ -32,6 +33,8 @@ from virtual_esp32_gateway import (
 
 PORT_HTTP = 8090
 PORT_TCP_GATEWAY = 5050
+FIREBASE_API_KEY = "AIzaSyPLACEHOLDER_FOR_LOCAL_BUILD_ONLY_0000"
+FIREBASE_PROJECT_ID = "pestillo-iot-inacap"
 
 # Estado global del laboratorio
 lab_state = {
@@ -46,10 +49,8 @@ lab_state = {
     "led_green": False,
     "led_red": True,
     "esp_now_packets": 0,
-    "ultimo_evento": "Sistema iniciado nominalmente.",
-    "logs_firestore": [
-        {"id": "log_001", "hora": "15:20:00", "email": "operador@inacap.cl", "rol": "OPERADOR", "accion": "SISTEMA_INICIALIZADO", "estado": "LOCKED", "dist": 45.0}
-    ],
+    "ultimo_evento": "Sistema iniciado y conectado a Cloud Firestore.",
+    "logs_firestore": [],
     "sniffer": []
 }
 
@@ -59,6 +60,89 @@ key_bytes = derivar_clave_aes("123456")
 # Simulador TCP Gateway
 sim_esp32 = SimuladorESP32(port=PORT_TCP_GATEWAY, pin_cifrado="123456")
 
+_firebase_token_cache = {"token": None, "expiry": 0}
+
+def _get_cloud_token():
+    now = time.time()
+    if _firebase_token_cache["token"] and now < _firebase_token_cache["expiry"]:
+        return _firebase_token_cache["token"]
+    try:
+        url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FIREBASE_API_KEY}"
+        payload = json.dumps({"email": "operador@inacap.cl", "password": "Inacap2026!", "returnSecureToken": True}).encode("utf-8")
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            _firebase_token_cache["token"] = data["idToken"]
+            _firebase_token_cache["expiry"] = now + 3000
+            return data["idToken"]
+    except Exception as e:
+        print(f"[FIREBASE TOKEN ERR] {e}")
+        return None
+
+def _async_push_to_cloud_firestore(accion, estado, dist, email, rol):
+    try:
+        token = _get_cloud_token()
+        if not token:
+            return
+        url = f"https://firestore.googleapis.com/v1/projects/{FIREBASE_PROJECT_ID}/databases/(default)/documents/accesos_log"
+        body = {
+            "fields": {
+                "timestamp": {"integerValue": str(int(time.time() * 1000))},
+                "email": {"stringValue": str(email)},
+                "rol": {"stringValue": str(rol)},
+                "accion": {"stringValue": str(accion)},
+                "estado": {"stringValue": str(estado)},
+                "distancia": {"doubleValue": float(dist)}
+            }
+        }
+        req = urllib.request.Request(url, data=json.dumps(body).encode("utf-8"), headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}"
+        })
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            doc_id = data.get("name", "").split("/")[-1]
+            print(f"[CLOUD FIRESTORE SYNC] Evento '{accion}' guardado en la nube: {doc_id}")
+    except Exception as e:
+        print(f"[CLOUD FIRESTORE SYNC ERR] {e}")
+
+def _fetch_cloud_logs_on_startup():
+    try:
+        token = _get_cloud_token()
+        if not token:
+            return
+        url = f"https://firestore.googleapis.com/v1/projects/{FIREBASE_PROJECT_ID}/databases/(default)/documents/accesos_log"
+        req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            docs = data.get("documents", [])
+            nuevos = []
+            for doc in docs:
+                fields = doc.get("fields", {})
+                ts = int(fields.get("timestamp", {}).get("integerValue", time.time()*1000)) / 1000.0
+                hora = time.strftime("%H:%M:%S", time.localtime(ts))
+                em = fields.get("email", {}).get("stringValue", "operador@inacap.cl")
+                ro = fields.get("rol", {}).get("stringValue", "OPERADOR")
+                acc = fields.get("accion", {}).get("stringValue", "ACCESO")
+                est = fields.get("estado", {}).get("stringValue", "LOCKED")
+                dist = float(fields.get("distancia", {}).get("doubleValue", fields.get("distancia", {}).get("integerValue", 0.0)))
+                nuevos.append({
+                    "id": doc.get("name", "").split("/")[-1][:8],
+                    "hora": hora,
+                    "email": em,
+                    "rol": ro,
+                    "accion": acc,
+                    "estado": est,
+                    "dist": round(dist, 1)
+                })
+            with lock:
+                if nuevos:
+                    lab_state["logs_firestore"] = nuevos[:30]
+    except Exception as e:
+        print(f"[FETCH LOGS ERR] {e}")
+
+# Iniciar sync de inicio en segundo plano
+threading.Thread(target=_fetch_cloud_logs_on_startup, daemon=True).start()
 
 def add_sniffer(tipo_dir, texto_plano, texto_cifrado):
     with lock:
@@ -73,9 +157,9 @@ def add_sniffer(tipo_dir, texto_plano, texto_cifrado):
 
 
 def add_firestore_log(accion, estado, dist, email=None, rol=None):
+    em = email or lab_state["usuario_email"]
+    ro = rol or lab_state["rol_usuario"]
     with lock:
-        em = email or lab_state["usuario_email"]
-        ro = rol or lab_state["rol_usuario"]
         lab_state["logs_firestore"].insert(0, {
             "id": f"log_{len(lab_state['logs_firestore'])+1:03d}",
             "hora": time.strftime("%H:%M:%S"),
@@ -87,6 +171,9 @@ def add_firestore_log(accion, estado, dist, email=None, rol=None):
         })
         if len(lab_state["logs_firestore"]) > 40:
             lab_state["logs_firestore"].pop()
+
+    # Sincronización real asíncrona con Cloud Firestore
+    threading.Thread(target=_async_push_to_cloud_firestore, args=(accion, estado, dist, em, ro), daemon=True).start()
 
 
 def trigger_apertura(fuente="PANEL_OPERADOR"):
