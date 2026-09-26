@@ -24,7 +24,7 @@ fun PantallaLogin(
     onLoginExitoso: () -> Unit
 ) {
     var email by remember { mutableStateOf("operador@inacap.cl") }
-    var password by remember { mutableStateOf("123456") }
+    var password by remember { mutableStateOf("Inacap2026!") }
     var esModoRegistro by remember { mutableStateOf(false) }
     var rolSeleccionado by remember { mutableStateOf("OPERADOR") } // OPERADOR o OBSERVADOR
     var mensajeError by remember { mutableStateOf<String?>(null) }
