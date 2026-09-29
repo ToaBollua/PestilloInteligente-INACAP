@@ -33,8 +33,9 @@ from virtual_esp32_gateway import (
 
 PORT_HTTP = 8090
 PORT_TCP_GATEWAY = 5050
-FIREBASE_API_KEY = "AIzaSyPLACEHOLDER_FOR_LOCAL_BUILD_ONLY_0000"
-FIREBASE_PROJECT_ID = "pestillo-iot-inacap"
+FIREBASE_API_KEY = os.environ.get("FIREBASE_API_KEY", "DUMMY_KEY_FOR_LOCAL_SIMULATION")
+FIREBASE_PROJECT_ID = os.environ.get("FIREBASE_PROJECT_ID", "pestillo-iot-inacap")
+
 
 # Estado global del laboratorio
 lab_state = {
