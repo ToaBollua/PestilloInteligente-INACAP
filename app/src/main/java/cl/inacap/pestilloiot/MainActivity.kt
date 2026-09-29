@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
         solicitarPermisosEnTiempoDeEjecucion()
 
         setContent {
-            MaterialTheme {
+            cl.inacap.pestilloiot.ui.theme.PestilloTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

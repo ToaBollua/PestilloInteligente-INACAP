@@ -1,6 +1,7 @@
 package cl.inacap.pestilloiot.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.inacap.pestilloiot.datos.AccesoLog
 import cl.inacap.pestilloiot.datos.FirestoreService
+import cl.inacap.pestilloiot.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,14 +33,24 @@ fun PantallaHistorial(
     val formatoFecha = remember { SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()) }
 
     Scaffold(
+        containerColor = CyberBg,
         topBar = {
             TopAppBar(
-                title = { Text("Historial de Accesos — Cloud Firestore", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        "AUDITORÍA // CLOUD FIRESTORE",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 16.sp,
+                        color = NeonGreen
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onVolver) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = NeonGreen)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = CyberPanel)
             )
         }
     ) { padding ->
@@ -49,19 +61,24 @@ fun PantallaHistorial(
                 .padding(16.dp)
         ) {
             Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, CyberBorderBright, RoundedCornerShape(10.dp)),
+                shape = RoundedCornerShape(10.dp),
+                colors = CardDefaults.cardColors(containerColor = CyberCard)
             ) {
                 Row(
                     modifier = Modifier.padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Default.History, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(Icons.Default.History, contentDescription = null, tint = NeonCyan)
+                    Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        "Auditoría Cloud en Tiempo Real (${logs.size} eventos registrados)",
-                        fontWeight = FontWeight.SemiBold,
-                        style = MaterialTheme.typography.bodyMedium
+                        "AUDITORÍA EN TIEMPO REAL // ${logs.size} EVENTOS",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 12.sp,
+                        color = NeonCyan
                     )
                 }
             }
@@ -73,14 +90,19 @@ fun PantallaHistorial(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No hay registros de acceso en Firestore aún.", color = Color.Gray)
+                    Text(
+                        "// SIN REGISTROS EN CLOUD FIRESTORE",
+                        fontFamily = FontFamily.Monospace,
+                        color = TextMuted,
+                        fontSize = 13.sp
+                    )
                 }
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(logs, key = { it.id.ifBlank { it.timestamp.toString() } }) { log ->
+                    items(logs, key = { it.id.ifBlank { "${it.timestamp}_${it.accion}" } }) { log ->
                         TarjetaItemLog(log, formatoFecha)
                     }
                 }
@@ -93,11 +115,15 @@ fun PantallaHistorial(
 fun TarjetaItemLog(log: AccesoLog, formato: SimpleDateFormat) {
     val esApertura = log.estado == "UNLOCKED"
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (esApertura) Color(0xFFF1F8E9) else MaterialTheme.colorScheme.surfaceVariant
-        )
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                1.dp,
+                if (esApertura) NeonGreen.copy(alpha = 0.6f) else CyberBorderBright,
+                RoundedCornerShape(8.dp)
+            ),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = CyberCard)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(
@@ -108,14 +134,15 @@ fun TarjetaItemLog(log: AccesoLog, formato: SimpleDateFormat) {
                 Text(
                     text = log.accion,
                     fontWeight = FontWeight.Bold,
-                    color = if (esApertura) Color(0xFF2E7D32) else MaterialTheme.colorScheme.primary,
-                    fontSize = 14.sp
+                    fontFamily = FontFamily.Monospace,
+                    color = if (esApertura) NeonGreen else NeonPink,
+                    fontSize = 13.sp
                 )
                 Text(
                     text = formato.format(Date(log.timestamp)),
                     fontFamily = FontFamily.Monospace,
-                    fontSize = 12.sp,
-                    color = Color.Gray
+                    fontSize = 11.sp,
+                    color = TextMuted
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
@@ -124,13 +151,17 @@ fun TarjetaItemLog(log: AccesoLog, formato: SimpleDateFormat) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Usuario: ${log.email} (${log.rol})",
-                    style = MaterialTheme.typography.bodySmall
+                    text = "ID: ${log.email} [${log.rol}]",
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 11.sp,
+                    color = TextPrimary
                 )
                 Text(
-                    text = "Dist: ${String.format(Locale.US, "%.1f", log.distancia)} cm",
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.SemiBold
+                    text = "D: ${String.format(Locale.US, "%.1f", log.distancia)}cm",
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = NeonCyan
                 )
             }
         }

@@ -203,10 +203,10 @@ object FirestoreService {
         accion: String,
         estado: String,
         distancia: Double = 0.0,
-        email: String = auth.currentUser?.email ?: "NODO_LOCAL",
-        rol: String = "SISTEMA"
+        email: String = try { auth.currentUser?.email ?: "operador@inacap.cl" } catch (_: Exception) { "operador@inacap.cl" },
+        rol: String = "OPERADOR"
     ) {
-        val log = hashMapOf(
+        val logMap = hashMapOf(
             "timestamp" to System.currentTimeMillis(),
             "email" to email,
             "rol" to rol,
@@ -215,42 +215,70 @@ object FirestoreService {
             "distancia" to distancia
         )
 
-        db.collection(COLECCION_LOGS)
-            .add(log)
-            .addOnFailureListener {
-                // Silently ignore or log locally if offline
-            }
+        try {
+            db.collection(COLECCION_LOGS)
+                .add(logMap)
+                .addOnSuccessListener { docRef ->
+                    // Éxito en Cloud Firestore
+                }
+                .addOnFailureListener {
+                    // Silently ignore
+                }
+        } catch (_: Exception) {}
     }
 
     fun obtenerHistorialStream(): Flow<List<AccesoLog>> = callbackFlow {
-        val listener = db.collection(COLECCION_LOGS)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
-            .limit(50)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    close(error)
-                    return@addSnapshotListener
+        var listener: com.google.firebase.firestore.ListenerRegistration? = null
+        try {
+            listener = db.collection(COLECCION_LOGS)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(50)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        trySend(emptyList())
+                        return@addSnapshotListener
+                    }
+
+                    val listaCloud = snapshot?.documents?.mapNotNull { doc ->
+                        try {
+                            val rawTs = doc.get("timestamp")
+                            val ts = when (rawTs) {
+                                is Number -> rawTs.toLong()
+                                is String -> rawTs.toLongOrNull() ?: 0L
+                                else -> 0L
+                            }
+                            val rawDist = doc.get("distancia")
+                            val dist = when (rawDist) {
+                                is Number -> rawDist.toDouble()
+                                is String -> rawDist.toDoubleOrNull() ?: 0.0
+                                else -> 0.0
+                            }
+                            AccesoLog(
+                                id = doc.id,
+                                timestamp = if (ts > 0) ts else System.currentTimeMillis(),
+                                email = doc.getString("email") ?: "operador@inacap.cl",
+                                rol = doc.getString("rol") ?: "OPERADOR",
+                                accion = doc.getString("accion") ?: "EVENTO_ACCESO",
+                                estado = doc.getString("estado") ?: "LOCKED",
+                                distancia = dist
+                            )
+                        } catch (_: Exception) {
+                            null
+                        }
+                    } ?: emptyList()
+
+                    trySend(listaCloud)
                 }
+        } catch (_: Exception) {
+            trySend(emptyList())
+        }
 
-                val lista = snapshot?.documents?.mapNotNull { doc ->
-                    AccesoLog(
-                        id = doc.id,
-                        timestamp = doc.getLong("timestamp") ?: 0L,
-                        email = doc.getString("email") ?: "",
-                        rol = doc.getString("rol") ?: "",
-                        accion = doc.getString("accion") ?: "",
-                        estado = doc.getString("estado") ?: "LOCKED",
-                        distancia = doc.getDouble("distancia") ?: 0.0
-                    )
-                } ?: emptyList()
-
-                trySend(lista)
-            }
-
-        awaitClose { listener.remove() }
+        awaitClose { listener?.remove() }
     }
 
     fun cerrarSesion() {
-        auth.signOut()
+        try {
+            auth.signOut()
+        } catch (_: Exception) {}
     }
 }

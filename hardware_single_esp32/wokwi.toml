@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = "Pestillo_Single_ESP32.ino"
+elf = ""

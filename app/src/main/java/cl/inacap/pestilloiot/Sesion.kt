@@ -168,6 +168,19 @@ object Sesion {
                                         "Pestillo Abierto",
                                         "El pasador se ha retraído exitosamente."
                                     )
+                                    FirestoreService.registrarEventoAcceso(
+                                        accion = "CONFIRMACION_ACTUADOR_OPEN",
+                                        estado = "UNLOCKED",
+                                        distancia = _distancia.value,
+                                        rol = rolUsuario.value
+                                    )
+                                } else {
+                                    FirestoreService.registrarEventoAcceso(
+                                        accion = "CONFIRMACION_ACTUADOR_LOCKED",
+                                        estado = "LOCKED",
+                                        distancia = _distancia.value,
+                                        rol = "SISTEMA"
+                                    )
                                 }
                             }
                         }
@@ -205,7 +218,8 @@ object Sesion {
         FirestoreService.registrarEventoAcceso(
             accion = "APERTURA_$fuente",
             estado = "UNLOCKED",
-            distancia = _distancia.value
+            distancia = _distancia.value,
+            rol = rolUsuario.value
         )
 
         // Temporizador de auto-cierre tras 3 segundos (IEC 62443 Fail-Secure)
@@ -246,6 +260,14 @@ object Sesion {
 
         enlaceActivo?.enviar(Mensaje(TipoMensaje.CMD, "latch", "OPEN"))
         _ultimoLog.value = "Comando de apertura enviado..."
+
+        // Registrar solicitud en Firestore
+        FirestoreService.registrarEventoAcceso(
+            accion = "SOLICITUD_APERTURA_PANEL",
+            estado = "UNLOCKED",
+            distancia = _distancia.value,
+            rol = rolUsuario.value
+        )
         return true
     }
 
@@ -259,7 +281,8 @@ object Sesion {
         FirestoreService.registrarEventoAcceso(
             accion = "BLOQUEO_FAILSAFE",
             estado = "LOCKED",
-            distancia = _distancia.value
+            distancia = _distancia.value,
+            rol = "SISTEMA"
         )
     }
 

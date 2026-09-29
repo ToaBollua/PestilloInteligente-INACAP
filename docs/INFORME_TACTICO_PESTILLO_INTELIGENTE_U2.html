@@ -567,29 +567,85 @@ Panel Android          Gateway ESP32         Actuador SG90
                 </div>
             </div>
 
-            <!-- INTEGRACION CLOUD FIREBASE & APK CLI -->
+            <!-- GUÍA HARDWARE SINGLE ESP32 -->
             <div class="card">
                 <div class="card-header">
-                    <span>7. CLOUD FIREBASE & APK NATIVO (LIVE)</span>
-                    <span class="badge-ok">PROD READY</span>
+                    <span>8. PROTOTIPO FÍSICO UNIFICADO (SINGLE ESP32)</span>
+                    <span class="badge-ok">READY</span>
                 </div>
                 <div style="font-size: 11px; line-height: 1.6;">
-                    <p style="margin-bottom: 6px;"><strong style="color: var(--neon-cyan);">🔥 Proyecto Cloud:</strong> <code>pestillo-iot-inacap</code></p>
-                    <p style="margin-bottom: 6px;"><strong style="color: var(--neon-green);">👤 Cuentas Auth Provisionadas:</strong></p>
+                    <p style="margin-bottom: 6px;"><strong style="color: var(--neon-cyan);">📁 Directorio:</strong> <code>hardware_single_esp32/</code></p>
+                    <p style="margin-bottom: 6px;"><strong style="color: var(--neon-green);">🔌 Pinout Físico:</strong></p>
                     <ul style="padding-left: 18px; margin-bottom: 6px;">
-                        <li><code>operador@inacap.cl</code> (UID: <code>0eJEcWCw8fMhpicHfcYyWCEJo7A2</code>) ➔ <strong>ROL OPERADOR</strong></li>
-                        <li><code>observador@inacap.cl</code> (UID: <code>8d5Sqz8JP8POmfIuC05URhTMgev1</code>) ➔ <strong>ROL OBSERVADOR</strong></li>
+                        <li>HC-SR04: <code>TRIG ➔ GPIO 5</code> | <code>ECHO ➔ GPIO 18</code></li>
+                        <li>SG90 Servo: <code>PWM ➔ GPIO 19</code> (LEDC 50Hz)</li>
+                        <li>LEDs: <code>Verde ➔ GPIO 22</code> | <code>Rojo ➔ GPIO 23</code></li>
                     </ul>
-                    <p style="margin-bottom: 6px;"><strong style="color: var(--neon-green);">📦 Colección Firestore:</strong> <code>/accesos_log</code> (Escritura y lectura de telemetría verificadas).</p>
-                    <p style="margin-bottom: 6px;"><strong style="color: var(--neon-pink);">📱 Binario Android Compilado:</strong></p>
-                    <p style="padding: 6px; background: rgba(0,0,0,0.5); border: 1px dashed var(--neon-pink); border-radius: 4px;">
-                        <code>/home/bollua/Descargas/pestillo-iot.apk</code> (21 MB, Gradle 8.9 + Temurin JDK 17)
-                    </p>
-                    <p style="margin-top: 6px;"><strong style="color: var(--neon-cyan);">🌐 Simulación Wokwi:</strong> <code>PestilloInteligente_ES1.ino</code> con diagrama JSON interactivo (HC-SR04 + SG90).</p>
+                    <p style="margin-bottom: 6px;"><strong style="color: var(--neon-pink);">📡 Conectividad Dual:</strong></p>
+                    <ul style="padding-left: 18px; margin-bottom: 6px;">
+                        <li>Bluetooth Serial SPP (Nombre: <code>PestilloIoT</code>)</li>
+                        <li>Wi-Fi TCP Server (Puerto: <code>5050</code>, Soft-AP / STA)</li>
+                    </ul>
                 </div>
             </div>
         </div>
 
+    </div>
+
+    <!-- SECCIÓN DE BITÁCORA TÁCTICA, RCA Y OBSTÁCULOS -->
+    <div class="card" style="margin-top: 10px;">
+        <div class="card-header">
+            <span>9. BITÁCORA TÁCTICA DE INCIDENCIAS, ANÁLISIS DE CAUSA RAÍZ (RCA) Y LECCIONES APRENDIDAS</span>
+            <span class="badge-ot">INGENIERÍA INVERSA</span>
+        </div>
+        <table class="neo-table">
+            <thead>
+                <tr>
+                    <th style="width: 140px;">INCIDENCIA</th>
+                    <th style="width: 180px;">SÍNTOMA DETECTADO</th>
+                    <th>CAUSA RAÍZ (RCA)</th>
+                    <th>MITIGACIÓN Y SOLUCIÓN IMPLEMENTADA</th>
+                    <th style="width: 90px;">ESTADO</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>INC-01: Aislamiento Bluetooth LXC</strong></td>
+                    <td>Estado de enlace <code>ERROR</code> inmediato al seleccionar Bluetooth en Waydroid.</td>
+                    <td>Los contenedores LXC de Waydroid no tienen acceso directo a <code>/dev/rfkill</code> ni al controlador HCI Bluetooth del host sin daemon de pasarela complejo.</td>
+                    <td>Establecimiento de <strong>Wi-Fi TCP (puerto 5050)</strong> como transporte oficial de pruebas en emulador/Waydroid; reserva de Bluetooth SPP para smartphones físicos con el ESP32 real.</td>
+                    <td><span class="badge-ok">RESUELTO</span></td>
+                </tr>
+                <tr>
+                    <td><strong>INC-02: Fuente de Verdad Cloud</strong></td>
+                    <td>Discrepancias entre memoria interna y eventos persistidos en Firestore.</td>
+                    <td>Existencia de un buffer reactivo intermedio (<code>local_xxxxxx</code>) que pre-alimentaba la UI sin esperar la confirmación de la base de datos de Google Cloud.</td>
+                    <td>Eliminación del buffer sintético en <code>FirestoreService.kt</code> y suscripción exclusiva a <code>SnapshotListener</code> ordenado por timestamp descendente.</td>
+                    <td><span class="badge-ok">RESUELTO</span></td>
+                </tr>
+                <tr>
+                    <td><strong>INC-03: Dualidad de Modos Android</strong></td>
+                    <td>El slider de proximidad en "Modo Nodo" no movía el panel web del PC.</td>
+                    <td>El "Modo Nodo" convierte al móvil en su propio servidor ESP32 autónomo en <code>192.168.240.x:5050</code>, mientras que el Laboratorio Web del PC es otro nodo servidor independiente.</td>
+                    <td>Inyección de señalética clara en la UI distinguiendo el rol de <strong>Panel de Control (Cliente Operador)</strong> versus <strong>Nodo IoT (Servidor de Cerrojo)</strong>.</td>
+                    <td><span class="badge-ok">RESUELTO</span></td>
+                </tr>
+                <tr>
+                    <td><strong>INC-04: Adaptación a Hardware Único</strong></td>
+                    <td>Requisito de presentar un prototipo tangible con solo 1 placa ESP32 disponible.</td>
+                    <td>El diseño inicial distribuido requería 2 nodos ESP-NOW (Sensor + Actuador).</td>
+                    <td>Desarrollo del firmware modular <code>Pestillo_Single_ESP32.ino</code> que unifica HC-SR04, SG90, LEDs, Buzzer, Bluetooth SPP y Wi-Fi TCP en un único chip.</td>
+                    <td><span class="badge-ok">RESUELTO</span></td>
+                </tr>
+                <tr>
+                    <td><strong>INC-05: Rediseño Estético Cyberpunk</strong></td>
+                    <td>Interfaz gráfica estándar Material 3 carente de identidad y contraste.</td>
+                    <td>Paleta clara por defecto no alineada con las directivas tácticas de GlitchPoint Studios.</td>
+                    <td>Sobrescritura total con <code>PestilloTheme</code>: fondo <code>#06090E</code>, fósforo verde neón <code>#00FF66</code>, cian <code>#00F0FF</code>, magenta <code>#FF0055</code> y tipografía Fira Code / Monospace.</td>
+                    <td><span class="badge-ok">RESUELTO</span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     <!-- BANNER INFERIOR -->

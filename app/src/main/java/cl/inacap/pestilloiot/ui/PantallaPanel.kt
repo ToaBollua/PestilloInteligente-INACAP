@@ -1,6 +1,7 @@
 package cl.inacap.pestilloiot.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.inacap.pestilloiot.Sesion
 import cl.inacap.pestilloiot.enlace.EstadoEnlace
+import cl.inacap.pestilloiot.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,24 +38,35 @@ fun PantallaPanel(
     val ultimoLog by Sesion.ultimoLog.collectAsState()
 
     val esOperador = (rolUsuario == "OPERADOR")
+    val esAbierto = (latchState == "UNLOCKED")
 
     Scaffold(
+        containerColor = CyberBg,
         topBar = {
             TopAppBar(
-                title = { Text("Panel de Control — Operador", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        "PANEL // OPERADOR DE ACCESO",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 17.sp,
+                        color = NeonGreen
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = {
                         Sesion.cerrarEnlace()
                         onVolver()
                     }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = NeonGreen)
                     }
                 },
                 actions = {
                     IconButton(onClick = onNavegarHistorial) {
-                        Icon(Icons.Default.History, contentDescription = "Historial Firestore")
+                        Icon(Icons.Default.History, contentDescription = "Historial Firestore", tint = NeonCyan)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = CyberPanel)
             )
         }
     ) { padding ->
@@ -66,14 +79,11 @@ fun PantallaPanel(
         ) {
             // Estado de Conexión y Rol
             Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = when (estadoEnlace) {
-                        EstadoEnlace.CONECTADO -> MaterialTheme.colorScheme.primaryContainer
-                        EstadoEnlace.CONECTANDO -> MaterialTheme.colorScheme.secondaryContainer
-                        else -> MaterialTheme.colorScheme.errorContainer
-                    }
-                )
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, if (estadoEnlace == EstadoEnlace.CONECTADO) NeonGreen else NeonPink, RoundedCornerShape(10.dp)),
+                shape = RoundedCornerShape(10.dp),
+                colors = CardDefaults.cardColors(containerColor = CyberCard)
             ) {
                 Row(
                     modifier = Modifier.padding(14.dp),
@@ -81,61 +91,85 @@ fun PantallaPanel(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(12.dp)
+                            .size(14.dp)
                             .clip(CircleShape)
                             .background(
                                 when (estadoEnlace) {
-                                    EstadoEnlace.CONECTADO -> Color(0xFF00FF66)
-                                    EstadoEnlace.CONECTANDO -> Color(0xFFFFB800)
-                                    else -> Color(0xFFFF3366)
+                                    EstadoEnlace.CONECTADO -> NeonGreen
+                                    EstadoEnlace.CONECTANDO -> NeonYellow
+                                    else -> NeonPink
                                 }
                             )
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
                     Column {
-                        Text("Enlace: $estadoEnlace", fontWeight = FontWeight.Bold)
-                        Text("Rol: $rolUsuario (${if (esOperador) "Control Total" else "Solo Lectura"})", style = MaterialTheme.typography.bodySmall)
+                        Text(
+                            "ESTADO ENLACE: $estadoEnlace",
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 13.sp,
+                            color = when (estadoEnlace) {
+                                EstadoEnlace.CONECTADO -> NeonGreen
+                                EstadoEnlace.CONECTANDO -> NeonYellow
+                                else -> NeonPink
+                            }
+                        )
+                        Text(
+                            "PERFIL RBAC: $rolUsuario (${if (esOperador) "CONTROL TOTAL" else "SOLO LECTURA"})",
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 11.sp,
+                            color = NeonCyan
+                        )
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
             // Telemetría en vivo del Pasador
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(2.dp, if (esAbierto) NeonGreen else CyberBorderBright, RoundedCornerShape(16.dp)),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = if (latchState == "UNLOCKED") Color(0xFFE8F5E9) else Color(0xFFFFEBEE)
-                )
+                colors = CardDefaults.cardColors(containerColor = CyberPanel)
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        imageVector = if (latchState == "UNLOCKED") Icons.Default.LockOpen else Icons.Default.Lock,
+                        imageVector = if (esAbierto) Icons.Default.LockOpen else Icons.Default.Lock,
                         contentDescription = "Estado Pasador",
-                        tint = if (latchState == "UNLOCKED") Color(0xFF2E7D32) else Color(0xFFC62828),
+                        tint = if (esAbierto) NeonGreen else NeonPink,
                         modifier = Modifier.size(72.dp)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = if (latchState == "UNLOCKED") "CERROJO ABIERTO" else "CERROJO BLOQUEADO",
-                        fontSize = 20.sp,
+                        text = if (esAbierto) "🔓 PESTILLO DESTRABADO (90°)" else "🔒 PESTILLO BLOQUEADO (0°)",
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (latchState == "UNLOCKED") Color(0xFF2E7D32) else Color(0xFFC62828)
+                        fontFamily = FontFamily.Monospace,
+                        color = if (esAbierto) NeonGreen else NeonPink
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Distancia exterior: ${String.format(java.util.Locale.US, "%.1f", distancia)} cm",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Medium
+                        text = "DISTANCIA SENSOR: ${String.format(java.util.Locale.US, "%.1f", distancia)} cm",
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = TextPrimary
+                    )
+                    Text(
+                        text = if (distancia < 8.0) "⚡ UMBRAL PROXIMIDAD ACTIVO (<8cm)" else "ENLACE PERIMETRAL SEGURO",
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 11.sp,
+                        color = if (distancia < 8.0) NeonPink else TextMuted
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             // Botón de Apertura Remota
             Button(
@@ -143,45 +177,69 @@ fun PantallaPanel(
                 enabled = esOperador && estadoEnlace == EstadoEnlace.CONECTADO,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    .height(56.dp)
+                    .border(
+                        1.dp,
+                        if (esOperador && estadoEnlace == EstadoEnlace.CONECTADO) NeonGreen else Color.Transparent,
+                        RoundedCornerShape(12.dp)
+                    ),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = NeonGreen,
+                    contentColor = TextDark,
+                    disabledContainerColor = CyberCard,
+                    disabledContentColor = TextMuted
+                )
             ) {
                 Icon(Icons.Default.LockOpen, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("DESTRAMPAR PESTILLO (3s)", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "DESTRABAR PESTILLO (3s)",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Monospace
+                )
             }
 
             if (!esOperador) {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Warning, contentDescription = null, tint = Color(0xFFFFB800), modifier = Modifier.size(18.dp))
+                    Icon(Icons.Default.Warning, contentDescription = null, tint = NeonYellow, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        "Rol Observador: Comandos de apertura deshabilitados por RBAC.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.outline
+                        "Rol Observador: Comandos deshabilitados por RBAC.",
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 11.sp,
+                        color = NeonYellow
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Log de telemetría y eventos
+            // Consola de telemetría y logs
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    .weight(1f)
+                    .border(1.dp, CyberBorder, RoundedCornerShape(10.dp)),
+                shape = RoundedCornerShape(10.dp),
+                colors = CardDefaults.cardColors(containerColor = CyberCard)
             ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text("Consola de Comandos y Telemetría:", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodySmall)
-                    Spacer(modifier = Modifier.height(4.dp))
+                Column(modifier = Modifier.padding(14.dp)) {
+                    Text(
+                        "CONSOLA TELEMETRÍA // H0P3 OT-KERNEL",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 11.sp,
+                        color = NeonCyan
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = ultimoLog,
                         fontFamily = FontFamily.Monospace,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        fontSize = 12.sp,
+                        color = TextPrimary
                     )
                 }
             }

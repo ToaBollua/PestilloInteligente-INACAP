@@ -185,7 +185,11 @@ def trigger_apertura(fuente="PANEL_OPERADOR"):
         lab_state["led_green"] = True
         lab_state["led_red"] = False
         lab_state["timer_countdown"] = 3.0
-        lab_state["ultimo_evento"] = f"Pestillo DESTRIABADO (90°) por {fuente}"
+        lab_state["ultimo_evento"] = f"Pestillo DESTRABADO (90°) por {fuente}"
+
+    # Broadcast a clientes TCP (Android / Host)
+    sim_esp32.broadcast_mensaje("ACK;latch;OPEN")
+    sim_esp32.broadcast_mensaje("LECTURA;latch;UNLOCKED")
 
     cif = cifrar_trama("ACK;latch;OPEN", key_bytes)
     add_sniffer("ESP32 ➔ APP", "ACK;latch;OPEN", cif)
@@ -211,6 +215,9 @@ def _timer_autocierre():
         lab_state["timer_countdown"] = 0.0
         lab_state["ultimo_evento"] = "Auto-cierre completado: Pestillo BLOQUEADO (0°)"
 
+    sim_esp32.broadcast_mensaje("ACK;latch;LOCKED")
+    sim_esp32.broadcast_mensaje("LECTURA;latch;LOCKED")
+
     cif = cifrar_trama("ACK;latch;LOCKED", key_bytes)
     add_sniffer("ESP32 ➔ APP", "ACK;latch;LOCKED", cif)
     add_firestore_log("BLOQUEO_FAILSAFE", "LOCKED", lab_state["distancia"], email="sistema@nodo.local", rol="SISTEMA")
@@ -225,6 +232,9 @@ def trigger_bloqueo():
         lab_state["timer_countdown"] = 0.0
         lab_state["ultimo_evento"] = "Bloqueo Forzado: Pestillo asegurado a 0°"
 
+    sim_esp32.broadcast_mensaje("ACK;latch;LOCKED")
+    sim_esp32.broadcast_mensaje("LECTURA;latch;LOCKED")
+
     cif = cifrar_trama("ACK;latch;LOCKED", key_bytes)
     add_sniffer("ESP32 ➔ APP", "ACK;latch;LOCKED", cif)
     add_firestore_log("BLOQUEO_MANUAL", "LOCKED", lab_state["distancia"])
@@ -236,11 +246,36 @@ def set_distancia_lab(d: float):
         lab_state["esp_now_packets"] += 1
 
     trama = f"LECTURA;dist;{lab_state['distancia']:.1f}"
+    sim_esp32.broadcast_mensaje(trama)
     cif = cifrar_trama(trama, key_bytes)
     add_sniffer("SENSOR ➔ ACTUADOR (ESP-NOW)", trama, cif)
 
     if lab_state["distancia"] < 8.0 and lab_state["latch_state"] == "LOCKED":
         trigger_apertura("SENSOR_PROXIMIDAD_HCSR04")
+
+
+# Enlazar parser de comandos del Gateway TCP directamente a la máquina de estados del laboratorio
+def _esp32_procesar_comando_hook(linea: str):
+    partes = linea.split(";")
+    if len(partes) < 3:
+        return
+    tipo, clave, valor = partes[0].upper(), partes[1], partes[2]
+    cif = cifrar_trama(linea, key_bytes)
+    add_sniffer("APP ➔ ESP32", linea, cif)
+
+    if tipo == "CMD" and clave == "latch":
+        if valor == "OPEN":
+            trigger_apertura("APP_ANDROID_REMOTA")
+        elif valor == "LOCK":
+            trigger_bloqueo()
+    elif tipo == "LECTURA" and clave == "dist":
+        try:
+            d = float(valor)
+            set_distancia_lab(d)
+        except Exception:
+            pass
+
+sim_esp32.procesar_comando = _esp32_procesar_comando_hook
 
 
 HTML_PAGE = """<!DOCTYPE html>
