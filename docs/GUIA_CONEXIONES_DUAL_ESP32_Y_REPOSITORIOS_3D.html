@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H0P3 // GUÍA DUAL ESP32, REPOSITORIOS 3D Y AUDITORÍA DE LATENCIA</title>
+    <style>
+        :root {
+            --bg-base: #03070d;
+            --bg-panel: #070f1a;
+            --bg-card: #0b1726;
+            --bg-accent: #0f2238;
+            --border-glow: #1a3a5a;
+            --neon-green: #39ff14;
+            --neon-cyan: #00e5ff;
+            --neon-magenta: #ff007f;
+            --neon-yellow: #ffd700;
+            --neon-red: #ff3333;
+            --text-main: #d1e2f2;
+            --text-muted: #6b8ca8;
+            --font-code: 'Fira Code', 'Courier New', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.5;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            background: var(--bg-panel);
+            border: 2px solid var(--border-glow);
+            border-top: 4px solid var(--neon-green);
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.12);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(180deg, #0d1e33 0%, #070f1a 100%);
+            padding: 24px 28px;
+            border-bottom: 2px solid var(--border-glow);
+            position: relative;
+        }
+
+        .header h1 {
+            font-family: var(--font-code);
+            font-size: 20px;
+            color: var(--neon-green);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pulse-led {
+            width: 12px;
+            height: 12px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-green);
+            display: inline-block;
+            animation: blink 1.3s infinite ease-in-out;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.85); }
+        }
+
+        .telemetry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+            background: var(--bg-base);
+            padding: 12px 16px;
+            border: 1px solid var(--border-glow);
+            border-radius: 4px;
+            font-family: var(--font-code);
+            font-size: 11px;
+        }
+
+        .telem-item span {
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .telem-item b {
+            color: var(--neon-cyan);
+        }
+
+        .content {
+            padding: 28px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 4px solid var(--neon-cyan);
+            padding-left: 12px;
+            margin: 28px 0 16px 0;
+            font-family: var(--font-code);
+            font-size: 15px;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-header:first-of-type { margin-top: 0; }
+        .section-header.green { border-left-color: var(--neon-green); color: var(--neon-green); }
+        .section-header.magenta { border-left-color: var(--neon-magenta); color: var(--neon-magenta); }
+        .section-header.yellow { border-left-color: var(--neon-yellow); color: var(--neon-yellow); }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 6px;
+            padding: 18px 20px;
+            margin-bottom: 22px;
+        }
+
+        .card-green { border-left: 3px solid var(--neon-green); }
+        .card-cyan { border-left: 3px solid var(--neon-cyan); }
+        .card-magenta { border-left: 3px solid var(--neon-magenta); }
+        .card-yellow { border-left: 3px solid var(--neon-yellow); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+            margin: 12px 0;
+            font-family: var(--font-code);
+        }
+
+        th, td {
+            border: 1px solid var(--border-glow);
+            padding: 9px 12px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--bg-accent);
+            color: var(--neon-cyan);
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) { background: rgba(255, 255, 255, 0.015); }
+        tr:hover { background: rgba(0, 229, 255, 0.04); }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 3px;
+            font-family: var(--font-code);
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .badge-green { background: rgba(57, 255, 20, 0.12); color: var(--neon-green); border: 1px solid var(--neon-green); }
+        .badge-cyan { background: rgba(0, 229, 255, 0.12); color: var(--neon-cyan); border: 1px solid var(--neon-cyan); }
+        .badge-pink { background: rgba(255, 0, 127, 0.12); color: var(--neon-magenta); border: 1px solid var(--neon-magenta); }
+        .badge-yellow { background: rgba(255, 215, 0, 0.12); color: var(--neon-yellow); border: 1px solid var(--neon-yellow); }
+        .badge-red { background: rgba(255, 51, 51, 0.12); color: var(--neon-red); border: 1px solid var(--neon-red); }
+
+        pre {
+            background: #020408;
+            border: 1px solid var(--border-glow);
+            padding: 14px;
+            border-radius: 4px;
+            font-family: var(--font-code);
+            font-size: 11.5px;
+            color: #a5d6ff;
+            overflow-x: auto;
+            margin: 12px 0;
+            line-height: 1.45;
+        }
+
+        .step-list {
+            padding-left: 20px;
+            font-size: 13.5px;
+            line-height: 1.8;
+        }
+
+        .step-list li { margin-bottom: 8px; }
+
+        .link-button {
+            display: inline-block;
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-family: var(--font-code);
+            font-size: 11px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .link-button:hover {
+            background: var(--neon-cyan);
+            color: #000;
+        }
+
+        .footer {
+            background: var(--bg-base);
+            padding: 16px 28px;
+            border-top: 1px dashed var(--border-glow);
+            font-family: var(--font-code);
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1><span class="pulse-led"></span> H0P3 // INFORME TÁCTICO: DUAL ESP32, MODELOS 3D & LATENCIA COGNITIVA</h1>
+        <div style="font-family: var(--font-code); font-size: 11.5px; color: var(--text-muted);">
+            SISTEMA PESTILLO INTELIGENTE IoT (TI3042 INACAP) • REPOSITORIOS 3D MECÁNICOS • BENCHMARK COGNITIVO
+        </div>
+        <div class="telemetry-grid">
+            <div class="telem-item"><span>PROYECTO:</span> <b>Pestillo Inteligente Dual ESP32</b></div>
+            <div class="telem-item"><span>TOPOLOGÍA:</span> <b>ESP-NOW 2.4 GHz (P2P < 5ms)</b></div>
+            <div class="telem-item"><span>FECHA DE EMISIÓN:</span> <b>2026-09-30 06:54 CLT</b></div>
+            <div class="telem-item"><span>ESTADO HARDWARE:</span> <b style="color: var(--neon-green);">2 NODOS LISTOS PARA FLASHEO</b></div>
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- SECCIÓN 1: GUÍA DE CONEXIONES DUAL ESP32 -->
+        <div class="section-header green">
+            <span>01. Guía Paso a Paso de Conexiones Pin a Pin (Dual ESP32)</span>
+            <span class="badge badge-green">NIVEL: PRINCIPIANTE A EXPERTO</span>
+        </div>
+        
+        <div class="card card-green">
+            <h3 style="color: var(--neon-green); font-family: var(--font-code); font-size: 14px; margin-bottom: 8px;">
+                🔌 A. Nodo 1: Sensor Exterior (ESP32 #1 // Puerta Exterior)
+            </h3>
+            <p style="font-size: 13px; margin-bottom: 12px;">
+                Mide la proximidad (< 8 cm) con el sensor ultrasónico HC-SR04 y transmite la orden de apertura vía radiofrecuencia ESP-NOW.
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Componente</th>
+                        <th>Pin del Módulo</th>
+                        <th>Pin en ESP32</th>
+                        <th>Color Cable</th>
+                        <th>Función y Nota Técnica</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>Sensor HC-SR04</b></td>
+                        <td><code>VCC</code></td>
+                        <td><b>VIN (5V)</b></td>
+                        <td>🔴 Rojo</td>
+                        <td>Alimentación de 5V para el transductor acústico.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Sensor HC-SR04</b></td>
+                        <td><code>GND</code></td>
+                        <td><b>GND</b></td>
+                        <td>⚫ Negro</td>
+                        <td>Tierra común.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Sensor HC-SR04</b></td>
+                        <td><code>TRIG</code></td>
+                        <td><b>GPIO 5</b></td>
+                        <td>🟡 Amarillo</td>
+                        <td>Disparo de pulso ultrasónico de 10 microsegundos.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Sensor HC-SR04</b></td>
+                        <td><code>ECHO</code></td>
+                        <td><b>GPIO 19</b></td>
+                        <td>🟢 Verde</td>
+                        <td>Retorno de eco <i>(recomendado divisor 1k/2k a 3.3V)</i>.</td>
+                    </tr>
+                    <tr>
+                        <td><b>LED Verde (Éxito)</b></td>
+                        <td>Ánodo (+) [220Ω]</td>
+                        <td><b>GPIO 22</b></td>
+                        <td>🟢 Verde</td>
+                        <td>Se enciende al detectar presencia válida (< 8 cm).</td>
+                    </tr>
+                    <tr>
+                        <td><b>LED Rojo (Reposo)</b></td>
+                        <td>Ánodo (+) [220Ω]</td>
+                        <td><b>GPIO 23</b></td>
+                        <td>🔴 Naranja</td>
+                        <td>Se mantiene encendido mientras la puerta está cerrada.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card card-cyan">
+            <h3 style="color: var(--neon-cyan); font-family: var(--font-code); font-size: 14px; margin-bottom: 8px;">
+                ⚙️ B. Nodo 2: Actuador Interior con Servomotor (ESP32 #2 // Cerradura)
+            </h3>
+            <p style="font-size: 13px; margin-bottom: 12px;">
+                Recibe la trama inalámbrica, gira el servomotor SG90 a 90° (retrae el pestillo), temporiza 3.5 segundos y vuelve a 0° (bloqueado).
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Componente</th>
+                        <th>Pin del Módulo</th>
+                        <th>Pin en ESP32</th>
+                        <th>Color Cable</th>
+                        <th>Función y Nota Técnica</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>Servomotor SG90</b></td>
+                        <td><code>VCC (Rojo)</code></td>
+                        <td><b>VIN (5V)</b></td>
+                        <td>🔴 Rojo</td>
+                        <td>Alimentación de 5V del motor <i>(soporta hasta 500mA de pico)</i>.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Servomotor SG90</b></td>
+                        <td><code>GND (Marrón)</code></td>
+                        <td><b>GND</b></td>
+                        <td>🟤 Marrón/Negro</td>
+                        <td>Tierra común de señal y alimentación.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Servomotor SG90</b></td>
+                        <td><code>PWM (Naranja)</code></td>
+                        <td><b>GPIO 18</b></td>
+                        <td>🟠 Naranja</td>
+                        <td>Señal de control PWM (0° = Bloqueado, 90° = Retraído).</td>
+                    </tr>
+                    <tr>
+                        <td><b>LED Verde (Abierto)</b></td>
+                        <td>Ánodo (+) [220Ω]</td>
+                        <td><b>GPIO 22</b></td>
+                        <td>🟢 Verde</td>
+                        <td>Indica pestillo retraído (Paso libre).</td>
+                    </tr>
+                    <tr>
+                        <td><b>LED Rojo (Bloqueado)</b></td>
+                        <td>Ánodo (+) [220Ω]</td>
+                        <td><b>GPIO 23</b></td>
+                        <td>🔴 Naranja</td>
+                        <td>Indica pestillo proyectado (Bloqueado).</td>
+                    </tr>
+                    <tr>
+                        <td><b>Buzzer Sonoro</b></td>
+                        <td>Positivo (+)</td>
+                        <td><b>GPIO 21</b></td>
+                        <td>🟣 Violeta</td>
+                        <td>Emite tonos agudos de apertura y graves de cierre.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Botón Manual Salida</b></td>
+                        <td>Terminal 1</td>
+                        <td><b>GPIO 4</b></td>
+                        <td>🔵 Azul</td>
+                        <td>Entrada digital <code>INPUT_PULLUP</code> (Conecta a GND al presionar).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SECCIÓN 2: GUÍA DE FLASHEO -->
+        <div class="section-header cyan">
+            <span>02. Guía de Flasheo del Firmware en Arduino IDE</span>
+            <span class="badge badge-cyan">PASO A PASO</span>
+        </div>
+        <div class="card">
+            <ol class="step-list">
+                <li><b>Instalación de la Placa ESP32:</b> En Arduino IDE, ve a <i>Archivo > Preferencias</i> y añade en URLs adicionales: <code>https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json</code>. Luego en <i>Gestor de Tarjetas</i> instala <b>esp32 by Espressif Systems</b>.</li>
+                <li><b>Instalación de Librería de Servo:</b> En <i>Administrar Bibliotecas</i>, busca e instala <code>ESP32Servo</code> de Kevin Harrington.</li>
+                <li><b>Flashear Nodo Sensor (ESP32 #1):</b> Conecta el primer ESP32, abre <code>hardware_dual_esp32/firmware_nodo_sensor_exterior.ino</code>, selecciona placa <code>ESP32 Dev Module</code> y puerto COM / <code>/dev/ttyUSB0</code>, y presiona <b>Upload</b>.</li>
+                <li><b>Flashear Nodo Actuador (ESP32 #2):</b> Conecta el segundo ESP32, abre <code>hardware_dual_esp32/firmware_nodo_actuador_interior.ino</code> y presiona <b>Upload</b>.</li>
+                <li><b>Nota sobre el botón BOOT:</b> Si el IDE muestra <code>Connecting........_____.....</code>, mantén presionado el botón <b>BOOT</b> en el ESP32 durante 2 segundos hasta que comience la escritura.</li>
+            </ol>
+        </div>
+
+        <!-- SECCIÓN 3: REPOSITORIOS Y MODELOS 3D IMPRIMIBLES -->
+        <div class="section-header magenta">
+            <span>03. Repositorios de Modelos 3D Imprimibles para Componentes y Pestillos</span>
+            <span class="badge badge-pink">FUENTES DE DESCARGA STL / STEP</span>
+        </div>
+        <div class="card card-magenta">
+            <p style="font-size: 13.5px; margin-bottom: 14px;">
+                Plataformas oficiales y motores de búsqueda para conseguir diseños de cerraduras electrónicas compatibles con servomotores SG90 y cajas para ESP32:
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Plataforma / Repositorio</th>
+                        <th>Especialidad / Enfoque</th>
+                        <th>Términos de Búsqueda Clave</th>
+                        <th>Enlace Directo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>Printables (Prusa)</b></td>
+                        <td>Modelos funcionales de alta precisión mecánica, tolerancias exactas y archivos STEP editables.</td>
+                        <td><code>SG90 lock mechanism</code>, <code>esp32 enclosure</code>, <code>sliding deadbolt</code></td>
+                        <td><a class="link-button" href="https://www.printables.com" target="_blank">Printables.com</a></td>
+                    </tr>
+                    <tr>
+                        <td><b>Thingiverse (UltiMaker)</b></td>
+                        <td>El mayor catálogo histórico de cerraduras Arduino, pestillos tipo cremallera y soportes de pared.</td>
+                        <td><code>servo deadbolt lock</code>, <code>SG90 latch</code>, <code>HC-SR04 mount</code></td>
+                        <td><a class="link-button" href="https://www.thingiverse.com" target="_blank">Thingiverse.com</a></td>
+                    </tr>
+                    <tr>
+                        <td><b>MakerWorld (Bambu Lab)</b></td>
+                        <td>Diseños modernos optimizados para impresión rápida, sin soportes y ensamble modular a presión.</td>
+                        <td><code>smart lock servo</code>, <code>esp32 case</code>, <code>door bolt rack</code></td>
+                        <td><a class="link-button" href="https://makerworld.com" target="_blank">MakerWorld.com</a></td>
+                    </tr>
+                    <tr>
+                        <td><b>Thangs (Metabuscador 3D)</b></td>
+                        <td>Motor de búsqueda inteligente que rastrea Thingiverse, Printables y GrabCAD simultáneamente.</td>
+                        <td><code>servo sliding latch SG90</code>, <code>electronic door lock</code></td>
+                        <td><a class="link-button" href="https://thangs.com" target="_blank">Thangs.com</a></td>
+                    </tr>
+                    <tr>
+                        <td><b>GrabCAD (CAD Industrial)</b></td>
+                        <td>Modelos dimensionales oficiales (STEP/IGES) de componentes electrónicos (SG90, ESP32 Devkit) para CAD.</td>
+                        <td><code>SG90 micro servo</code>, <code>ESP32 WROOM 32D</code></td>
+                        <td><a class="link-button" href="https://grabcad.com" target="_blank">GrabCAD.com</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4 style="color: var(--neon-cyan); font-family: var(--font-code); font-size: 13px; margin: 16px 0 8px 0;">
+                ⚙️ Parámetros Recomendados para las Impresoras 3D de la Universidad (FDM):
+            </h4>
+            <div style="font-size: 13px; line-height: 1.7; background: rgba(0,0,0,0.4); padding: 12px 16px; border-radius: 4px; border: 1px solid var(--border-glow);">
+                • <b>Material:</b> PLA o PETG <i>(PETG recomendado para el pestillo deslizante por fricción y durabilidad)</i>.<br>
+                • <b>Relleno (Infill):</b> 35% a 50% con patrón <b>Gyroid</b> o <b>Grid</b> para soportar la fuerza de empuje.<br>
+                • <b>Paredes / Perímetros:</b> 4 perímetros (aumenta drásticamente la resistencia estructural frente a capas).<br>
+                • <b>Altura de Capa:</b> 0.20 mm (balance óptimo entre velocidad de impresión y resolución de engranajes).
+            </div>
+        </div>
+
+        <!-- SECCIÓN 4: AUDITORÍA COMPARATIVA DE LATENCIA COGNITIVA -->
+        <div class="section-header yellow">
+            <span>04. Auditoría Comparativa de Latencia Cognitiva (29 vs 30 de Septiembre)</span>
+            <span class="badge badge-yellow">TELEMETRÍA COMPARADA</span>
+        </div>
+        <div class="card card-yellow">
+            <p style="font-size: 13px; margin-bottom: 12px;">
+                Evolución de tiempos de respuesta, códigos HTTP y disponibilidad entre la sesión de ayer y la medición actual:
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Proveedor / Modelo</th>
+                        <th>Latencia Ayer (29 Sep)</th>
+                        <th>Latencia Hoy (30 Sep)</th>
+                        <th>Delta / Estado Actual</th>
+                        <th>Diagnóstico Técnico</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>OpenRouter (gemini-2.5-flash)</b></td>
+                        <td>505.3 ms (402 Payment)</td>
+                        <td><b style="color: var(--neon-green);">1,527.4 ms</b></td>
+                        <td><span class="badge badge-green">RECUPERADO (200 OK)</span></td>
+                        <td><b>Canal restablecido.</b> Respondió exitosamente con <code>PONG!</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Ollama Local (nomic-embed-text)</b></td>
+                        <td>603.0 ms (200 OK)</td>
+                        <td><b style="color: var(--neon-green);">572.8 ms</b></td>
+                        <td><span class="badge badge-green">-30.2 ms (MEJORÓ)</span></td>
+                        <td><b>Excelente estabilidad.</b> Genera vectores de 768 dims en < 600 ms.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Ollama Local (llama3.2:3b)</b></td>
+                        <td>1,160.0 ms (200 OK)</td>
+                        <td>8,416.9 ms (200 OK)</td>
+                        <td><span class="badge badge-yellow">+7,256 ms (COLD-START)</span></td>
+                        <td>Retardo inicial por recarga del modelo en CPU (eval duration: 2.9s).</td>
+                    </tr>
+                    <tr>
+                        <td><b>Google Gemini (gemini-2.5-flash)</b></td>
+                        <td>1,128.1 ms (429 Rate Limit)</td>
+                        <td>970.8 ms (429 Rate Limit)</td>
+                        <td><span class="badge badge-red">PERSISTE 429</span></td>
+                        <td>Cuota de la llave gratuita continúa saturada. Requiere nueva llave.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Groq (llama-3.3-70b-versatile)</b></td>
+                        <td>72.3 ms (403 Forbidden)</td>
+                        <td>72.6 ms (403 Forbidden)</td>
+                        <td><span class="badge badge-red">PERSISTE 403</span></td>
+                        <td>Clave API bloqueada en consola Groq. Requiere rotación manual.</td>
+                    </tr>
+                    <tr>
+                        <td><b>SambaNova (Llama-3.1-70B)</b></td>
+                        <td>823.8 ms (404 Not Found)</td>
+                        <td>760.7 ms (404 Not Found)</td>
+                        <td><span class="badge badge-red">PERSISTE 404</span></td>
+                        <td>Endpoint deprecado. Debe actualizarse a <code>Meta-Llama-3.3-70B-Instruct</code>.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
+                💡 <b>Conclusión de la Cascada:</b> Se recuperó <b>OpenRouter</b> como vía rápida externa (`200 OK`), complementando la resiliencia de <b>Ollama Local</b> (`llama3.2:3b` y `nomic-embed-text`) para mantener el clúster cognitivo 100% operativo sin interrupciones.
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <div>H0P3 SOVEREIGN ENGINE • GLITCHPOINT STUDIOS © 2026</div>
+        <div>ESTADO: REPOSITORIO ACTUALIZADO • GUÍA DESPLEGADA EN VIVALDI • ADJUNTO DESPACHADO</div>
+    </div>
+</div>
+
+</body>
+</html>
