@@ -267,11 +267,34 @@ float medirDistanciaHCSR04() {
 }
 
 void procesarTramaComando(String trama, bool esBluetooth) {
-  if (trama == "CMD;latch;OPEN" || trama.indexOf("CMD;latch;OPEN") >= 0) {
-    destrabarPestillo(esBluetooth ? "APP_BLUETOOTH_REMOTO" : "APP_WIFI_TCP_REMOTO");
-  } else if (trama == "CMD;latch;LOCK" || trama.indexOf("CMD;latch;LOCK") >= 0) {
-    bloquearPestillo(esBluetooth ? "APP_BLUETOOTH_MANUAL" : "APP_WIFI_TCP_MANUAL");
+  trama.trim();
+  const char* medioStr = esBluetooth ? "BLUETOOTH_SPP" : "WIFI_TCP_5050";
+
+  // 1. Comando de Bloqueo Inmediato (Fail-Secure: siempre permitido)
+  if (trama.startsWith("CMD;latch;LOCK")) {
+    bloquearPestillo(esBluetooth ? "APP_BT_MANUAL" : "APP_TCP_MANUAL");
+    return;
   }
+
+  // 2. Comando de Apertura con Validación RBAC en Microcontrolador
+  if (trama.startsWith("CMD;latch;OPEN")) {
+    // Exigir rol OPERADOR o ADMIN verificado en la trama
+    bool esAutorizado = (trama.indexOf("OPERADOR") >= 0 || trama.indexOf("ADMIN") >= 0);
+
+    if (esAutorizado) {
+      Serial.printf("✅ [RBAC MICROCONTROLADOR] Acceso concedido vía %s | Trama: %s\n", medioStr, trama.c_str());
+      destrabarPestillo(esBluetooth ? "APP_BT_OPERADOR" : "APP_TCP_OPERADOR");
+    } else {
+      // Intento anónimo o sin privilegios de operador
+      Serial.printf("⛔ [RBAC ALERTA] Acceso DENEGADO vía %s | Trama sin rol Operador: %s\n", medioStr, trama.c_str());
+      broadcastMensaje("ACK;latch;REJECTED_UNAUTHORIZED");
+      broadcastMensaje("INFO;seguridad;ACCESO_DENEGADO_RBAC_NODO");
+    }
+    return;
+  }
+
+  // Trama no reconocida
+  Serial.printf("⚠️ [PROTOCOLO] Trama desconocida: %s\n", trama.c_str());
 }
 
 void broadcastMensaje(String mensaje) {

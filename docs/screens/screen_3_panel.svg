@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 740" width="360" height="740">
+  <rect width="360" height="740" rx="36" fill="#0A0E17" stroke="#1E293B" stroke-width="4"/>
+  <text x="24" y="28" fill="#94A3B8" font-family="monospace" font-size="11">15:32</text>
+  <text x="290" y="28" fill="#94A3B8" font-family="monospace" font-size="11">📶 84%</text>
+  <!-- App Bar -->
+  <rect x="0" y="44" width="360" height="48" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="20" y="74" fill="#00E676" font-family="monospace" font-weight="bold" font-size="13">PANEL OPERADOR // CONECTADO</text>
+  
+  <!-- Status Badge -->
+  <rect x="24" y="104" width="312" height="150" rx="12" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <circle cx="180" cy="155" r="30" fill="#EF4444" fill-opacity="0.15" stroke="#EF4444" stroke-width="2"/>
+  <text x="180" y="163" text-anchor="middle" font-size="24">🔒</text>
+  <text x="180" y="208" text-anchor="middle" fill="#EF4444" font-family="monospace" font-weight="bold" font-size="16">PESTILLO BLOQUEADO</text>
+  <text x="180" y="228" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10">NORMA IEC 62443 // FAIL-SECURE ACTIVO</text>
+
+  <!-- Distance Gauge -->
+  <rect x="24" y="266" width="312" height="90" rx="10" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="36" y="290" fill="#00E5FF" font-family="monospace" font-size="11">SENSOR ULTRASÓNICO (HC-SR04):</text>
+  <text x="36" y="325" fill="#F8FAFC" font-family="monospace" font-weight="bold" font-size="28">38.4 cm</text>
+  <rect x="180" y="306" width="140" height="10" rx="5" fill="#1E293B"/>
+  <rect x="180" y="306" width="80" height="10" rx="5" fill="#00E5FF"/>
+  <text x="180" y="332" fill="#64748B" font-family="monospace" font-size="9">Umbral proximidad: &lt; 8.0 cm</text>
+
+  <!-- Open Action Button (Neon Green) -->
+  <rect x="24" y="372" width="312" height="70" rx="12" fill="#00E676" stroke="#00E676" stroke-width="2"/>
+  <text x="180" y="414" text-anchor="middle" fill="#0A0E17" font-family="monospace" font-weight="bold" font-size="16">🔓 ABRIR PESTILLO REMOTO</text>
+  <text x="180" y="430" text-anchor="middle" fill="#0A0E17" font-family="monospace" font-size="10">DESPACHO CON NONCE ANTI-REPLAY</text>
+
+  <!-- Live Log Console -->
+  <rect x="24" y="460" width="312" height="170" rx="10" fill="#030712" stroke="#1E293B" stroke-width="1"/>
+  <text x="36" y="482" fill="#00E676" font-family="monospace" font-weight="bold" font-size="10">&gt; TELEMETRÍA EN TIEMPO REAL:</text>
+  <text x="36" y="504" fill="#94A3B8" font-family="monospace" font-size="9">15:31:02 [TCP] Conexión establecida a 192.168.4.1:5050</text>
+  <text x="36" y="520" fill="#94A3B8" font-family="monospace" font-size="9">15:31:03 [AES] Clave PBKDF2 derivada con PIN 849201</text>
+  <text x="36" y="536" fill="#00E676" font-family="monospace" font-size="9">15:31:10 [RX] LECTURA;dist;38.4;latch;LOCKED</text>
+  <text x="36" y="552" fill="#00E5FF" font-family="monospace" font-size="9">15:31:25 [TX] CMD;latch;OPEN;OPERADOR;... (Anti-Replay)</text>
+  <text x="36" y="568" fill="#00E676" font-family="monospace" font-size="9">15:31:26 [RX] ACK;latch;OPEN (Retracción SG90 a 90°)</text>
+  <text x="36" y="584" fill="#EF4444" font-family="monospace" font-size="9">15:31:29 [SYS] Temporizador 3s expirado -&gt; Re-bloqueo</text>
+</svg>

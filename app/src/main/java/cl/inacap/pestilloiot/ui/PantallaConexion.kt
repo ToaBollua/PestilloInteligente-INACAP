@@ -239,20 +239,20 @@ fun PantallaConexion(
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         SuggestionChip(
-                            onClick = { destinoTexto = "192.168.240.1" },
-                            label = { Text("Waydroid", fontFamily = FontFamily.Monospace, fontSize = 11.sp, color = NeonGreen) },
+                            onClick = { destinoTexto = "192.168.4.1" },
+                            label = { Text("ESP32 AP (192.168.4.1)", fontFamily = FontFamily.Monospace, fontSize = 11.sp, color = NeonGreen) },
                             colors = SuggestionChipDefaults.suggestionChipColors(containerColor = CyberCard),
-                            border = SuggestionChipDefaults.suggestionChipBorder(true, borderColor = CyberBorderBright)
+                            border = SuggestionChipDefaults.suggestionChipBorder(true, borderColor = NeonGreen)
                         )
                         SuggestionChip(
-                            onClick = { destinoTexto = "100.99.225.123" },
-                            label = { Text("Tailscale", fontFamily = FontFamily.Monospace, fontSize = 11.sp, color = NeonCyan) },
+                            onClick = { destinoTexto = "192.168.240.1" },
+                            label = { Text("Waydroid", fontFamily = FontFamily.Monospace, fontSize = 11.sp, color = NeonCyan) },
                             colors = SuggestionChipDefaults.suggestionChipColors(containerColor = CyberCard),
                             border = SuggestionChipDefaults.suggestionChipBorder(true, borderColor = CyberBorderBright)
                         )
                         SuggestionChip(
                             onClick = { destinoTexto = "127.0.0.1" },
-                            label = { Text("Localhost", fontFamily = FontFamily.Monospace, fontSize = 11.sp, color = TextMuted) },
+                            label = { Text("Local", fontFamily = FontFamily.Monospace, fontSize = 11.sp, color = TextMuted) },
                             colors = SuggestionChipDefaults.suggestionChipColors(containerColor = CyberCard),
                             border = SuggestionChipDefaults.suggestionChipBorder(true, borderColor = CyberBorder)
                         )

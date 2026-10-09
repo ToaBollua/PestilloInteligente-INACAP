@@ -1,103 +1,103 @@
 package cl.inacap.pestilloiot
 
+import cl.inacap.pestilloiot.seguridad.Cripto
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
-import javax.crypto.Cipher
-import javax.crypto.spec.GCMParameterSpec
-import javax.crypto.spec.PBEKeySpec
-import javax.crypto.spec.SecretKeySpec
-import javax.crypto.SecretKeyFactory
-import java.security.SecureRandom
-import java.util.Base64
 
 /**
- * Pruebas unitarias nativas para los algoritmos criptográficos del sistema:
+ * Pruebas unitarias nativas sobre el motor criptográfico real [cl.inacap.pestilloiot.seguridad.Cripto]:
  * - Derivación de claves PBKDF2 (HMAC-SHA256, 10.000 iteraciones)
- * - Cifrado autenticado AES-256-GCM con detección de manipulación (Tag 128-bit)
+ * - Cifrado y autenticación simétrica AES-256-GCM (128-bit Auth Tag)
+ * - Detección estricta de manipulación de integridad (Fail-Closed en descifrado)
+ * - Protección Anti-Replay mediante Nonce único y ventana temporal
  */
 class CriptoUnitTest {
 
-    private val salt = "Inacap_Pestillo_IoT_2026_Salt".toByteArray(Charsets.UTF_8)
-
-    private fun derivarClave(pin: String): SecretKeySpec {
-        val spec = PBEKeySpec(pin.toCharArray(), salt, 10000, 256)
-        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-        val bytes = factory.generateSecret(spec).encoded
-        return SecretKeySpec(bytes, "AES")
+    @Before
+    fun setUp() {
+        Cripto.limpiarCacheNoncesParaTests()
     }
 
-    private fun cifrarAESGCM(textoPlano: String, clave: SecretKeySpec): String {
-        val iv = ByteArray(12)
-        SecureRandom().nextBytes(iv)
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        val gcmSpec = GCMParameterSpec(128, iv)
-        cipher.init(Cipher.ENCRYPT_MODE, clave, gcmSpec)
-        val bytesTexto = textoPlano.toByteArray(Charsets.UTF_8)
-        val textoCifrado = cipher.doFinal(bytesTexto)
-        val combinado = ByteArray(iv.size + textoCifrado.size)
-        System.arraycopy(iv, 0, combinado, 0, iv.size)
-        System.arraycopy(textoCifrado, 0, combinado, iv.size, textoCifrado.size)
-        return Base64.getEncoder().encodeToString(combinado)
+    @Test
+    fun testDerivacionClavePBKDF2ConCriptoReal() {
+        val pin = "849201"
+        val clave1 = Cripto.claveDesdeCodigo(pin)
+        val clave2 = Cripto.claveDesdeCodigo(pin)
+
+        assertNotNull(clave1)
+        assertEquals("AES", clave1.algorithm)
+        assertEquals(32, clave1.encoded.size) // 256 bits = 32 bytes
+        // Determinismo criptográfico: mismo PIN y Salt generan la misma clave
+        assertArrayEquals(clave1.encoded, clave2.encoded)
     }
 
-    private fun descifrarAESGCM(payloadBase64: String, clave: SecretKeySpec): String? {
-        return try {
-            val bytes = Base64.getDecoder().decode(payloadBase64)
-            if (bytes.size < 12 + 16) return null
-            val iv = ByteArray(12)
-            val longitudCifrado = bytes.size - 12
-            val bytesCifrados = ByteArray(longitudCifrado)
-            System.arraycopy(bytes, 0, iv, 0, 12)
-            System.arraycopy(bytes, 12, bytesCifrados, 0, longitudCifrado)
-            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-            val gcmSpec = GCMParameterSpec(128, iv)
-            cipher.init(Cipher.DECRYPT_MODE, clave, gcmSpec)
-            String(cipher.doFinal(bytesCifrados), Charsets.UTF_8)
-        } catch (e: Exception) {
-            null
+    @Test
+    fun testRechazoDePinMenorA6Digitos() {
+        assertThrows(IllegalArgumentException::class.java) {
+            Cripto.claveDesdeCodigo("12345") // 5 dígitos
         }
     }
 
     @Test
-    fun testDerivacionPBKDF2Consistente() {
-        val clave1 = derivarClave("123456")
-        val clave2 = derivarClave("123456")
-        val claveDistinta = derivarClave("654321")
-        assertArrayEquals("La misma semilla debe generar idéntica llave de 256 bits", clave1.encoded, clave2.encoded)
-        assertFalse("Semillas distintas deben producir llaves distintas", clave1.encoded.contentEquals(claveDistinta.encoded))
-        assertEquals(32, clave1.encoded.size) // 256 bits = 32 bytes
-    }
+    fun testCifradoYDescifradoAESGCMConCriptoReal() {
+        val clave = Cripto.claveDesdeCodigo("987654")
+        val mensajeOriginal = "CMD;latch;OPEN;OPERADOR;1728500000;a8b7c6d5"
 
-    @Test
-    fun testCifradoYDescifradoAES256GCM() {
-        val clave = derivarClave("123456")
-        val comandoOriginal = "CMD;latch;OPEN"
-        val payloadCifrado = cifrarAESGCM(comandoOriginal, clave)
+        val payloadCifrado = Cripto.cifrar(mensajeOriginal, clave)
         assertNotNull(payloadCifrado)
-        assertNotEquals(comandoOriginal, payloadCifrado)
-        val comandoRecuperado = descifrarAESGCM(payloadCifrado, clave)
-        assertEquals(comandoOriginal, comandoRecuperado)
+        assertNotEquals(mensajeOriginal, payloadCifrado)
+
+        val textoDescifrado = Cripto.descifrar(payloadCifrado, clave)
+        assertEquals(mensajeOriginal, textoDescifrado)
     }
 
     @Test
-    fun testDeteccionManipulacionGCMTagInvalido() {
-        val clave = derivarClave("123456")
-        val comandoOriginal = "CMD;latch;OPEN"
-        val payloadBase64 = cifrarAESGCM(comandoOriginal, clave)
-        val bytes = Base64.getDecoder().decode(payloadBase64)
-        // Corromper el último byte del Auth Tag (integridad comprometida)
-        bytes[bytes.size - 1] = (bytes[bytes.size - 1].toInt() xor 0xFF).toByte()
-        val payloadAlterado = Base64.getEncoder().encodeToString(bytes)
-        val resultado = descifrarAESGCM(payloadAlterado, clave)
-        assertNull("Un paquete con Tag GCM corrompido DEBE ser rechazado matemáticamente (null)", resultado)
+    fun testDeteccionDeManipulacionIntegridadTagGCM() {
+        val clave = Cripto.claveDesdeCodigo("554433")
+        val payloadCifrado = Cripto.cifrar("CMD;latch;OPEN", clave)
+
+        // Simular manipulación de bits en tránsito (Man-in-the-Middle)
+        val bytes = java.util.Base64.getDecoder().decode(payloadCifrado)
+        bytes[bytes.size - 1] = (bytes[bytes.size - 1].toInt() xor 0x01).toByte()
+        val payloadManipulado = java.util.Base64.getEncoder().encodeToString(bytes)
+
+        // El algoritmo AES-GCM debe rechazar la autenticación del tag
+        val resultado = Cripto.descifrar(payloadManipulado, clave)
+        assertNull("El descifrado de un mensaje manipulado debe fallar (retornar null)", resultado)
     }
 
     @Test
-    fun testRechazoClaveIncorrecta() {
-        val claveCorrecta = derivarClave("123456")
-        val claveErronea = derivarClave("999999")
-        val payload = cifrarAESGCM("CMD;latch;LOCK", claveCorrecta)
-        val resultado = descifrarAESGCM(payload, claveErronea)
-        assertNull("Descifrar con PIN erróneo debe retornar null sin arrojar excepción no capturada", resultado)
+    fun testEmpaquetadoYValidacionAntiReplay() {
+        val trama = Cripto.empaquetarComandoSeguro("OPEN", "OPERADOR")
+        val validacion = Cripto.validarAntiReplay(trama)
+
+        assertNotNull("La trama empaquetada legítima debe ser válida", validacion)
+        assertEquals("OPEN", validacion?.comando)
+        assertEquals("OPERADOR", validacion?.rol)
+        assertNotNull(validacion?.nonce)
+        assertTrue(validacion?.nonce!!.length >= 8)
+    }
+
+    @Test
+    fun testRechazoDeReplayAttackPorNonceDuplicado() {
+        val trama = Cripto.empaquetarComandoSeguro("OPEN", "OPERADOR")
+
+        // Primer envío: Debe ser aceptado
+        val primerIntento = Cripto.validarAntiReplay(trama)
+        assertNotNull("El primer envío con Nonce fresco debe ser válido", primerIntento)
+
+        // Segundo envío idéntico (Ataque de Reenvío / Replay Attack): Debe ser rechazado
+        val segundoIntento = Cripto.validarAntiReplay(trama)
+        assertNull("El reenvío de un Nonce ya consumido debe ser rechazado inmediatamente", segundoIntento)
+    }
+
+    @Test
+    fun testRechazoDeTramaExpiradaPorVentanaTemporal() {
+        val tiempoPasado = System.currentTimeMillis() - 45000L // 45 segundos atrás (ventana máx: 30s)
+        val tramaVieja = "OPEN;OPERADOR;$tiempoPasado;deadbeef010203"
+
+        val validacion = Cripto.validarAntiReplay(tramaVieja)
+        assertNull("Una trama con timestamp desfasado debe ser rechazada", validacion)
     }
 }

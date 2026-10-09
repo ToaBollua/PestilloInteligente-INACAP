@@ -1,5 +1,6 @@
 package cl.inacap.pestilloiot.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -32,7 +33,6 @@ fun PantallaLogin(
     var email by remember { mutableStateOf("operador@inacap.cl") }
     var password by remember { mutableStateOf("Inacap2026!") }
     var esModoRegistro by remember { mutableStateOf(false) }
-    var rolSeleccionado by remember { mutableStateOf("OPERADOR") } // OPERADOR o OBSERVADOR
     var mensajeError by remember { mutableStateOf<String?>(null) }
     var cargando by remember { mutableStateOf(false) }
 
@@ -137,33 +137,28 @@ fun PantallaLogin(
 
                     if (esModoRegistro) {
                         Spacer(modifier = Modifier.height(14.dp))
-                        Text(
-                            "ROL RBAC EN SISTEMA:",
-                            fontWeight = FontWeight.SemiBold,
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 12.sp,
-                            color = NeonCyan,
-                            modifier = Modifier.align(Alignment.Start)
-                        )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = CyberCard,
+                            border = BorderStroke(1.dp, NeonCyan.copy(alpha = 0.5f)),
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                RadioButton(
-                                    selected = (rolSeleccionado == "OPERADOR"),
-                                    onClick = { rolSeleccionado = "OPERADOR" },
-                                    colors = RadioButtonDefaults.colors(selectedColor = NeonGreen, unselectedColor = TextMuted)
+                            Column(modifier = Modifier.padding(10.dp)) {
+                                Text(
+                                    "CONTROL DE ACCESO BASADO EN ROLES (RBAC):",
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 11.sp,
+                                    color = NeonCyan
                                 )
-                                Text("Operador", fontFamily = FontFamily.Monospace, fontSize = 12.sp, color = TextPrimary)
-                            }
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                RadioButton(
-                                    selected = (rolSeleccionado == "OBSERVADOR"),
-                                    onClick = { rolSeleccionado = "OBSERVADOR" },
-                                    colors = RadioButtonDefaults.colors(selectedColor = NeonCyan, unselectedColor = TextMuted)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    "Todo nuevo usuario recibe rol 'OBSERVADOR' (acceso de solo lectura). La asignación de 'OPERADOR' o 'ADMIN' es gestionada exclusivamente por el Administrador.",
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 10.sp,
+                                    color = TextMuted,
+                                    lineHeight = 14.sp
                                 )
-                                Text("Observador", fontFamily = FontFamily.Monospace, fontSize = 12.sp, color = TextPrimary)
                             }
                         }
                     }
@@ -188,7 +183,6 @@ fun PantallaLogin(
                                 FirestoreService.registrarUsuario(
                                     email = email,
                                     clave = password,
-                                    rol = rolSeleccionado,
                                     onSuccess = { _, rol ->
                                         cargando = false
                                         Sesion.rolUsuario.value = rol

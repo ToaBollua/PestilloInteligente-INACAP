@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 740" width="360" height="740">
+  <rect width="360" height="740" rx="36" fill="#0A0E17" stroke="#1E293B" stroke-width="4"/>
+  <text x="24" y="28" fill="#94A3B8" font-family="monospace" font-size="11">15:34</text>
+  <text x="290" y="28" fill="#94A3B8" font-family="monospace" font-size="11">📶 84%</text>
+  <!-- App Bar -->
+  <rect x="0" y="44" width="360" height="48" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="20" y="74" fill="#00E676" font-family="monospace" font-weight="bold" font-size="13">CLOUD FIRESTORE // AUDITORÍA</text>
+
+  <!-- Log Card 1 -->
+  <rect x="24" y="104" width="312" height="80" rx="8" fill="#0F172A" stroke="#00E676" stroke-width="1"/>
+  <text x="36" y="126" fill="#00E676" font-family="monospace" font-weight="bold" font-size="11">APERTURA_REMOTA_AUTORIZADA</text>
+  <text x="36" y="144" fill="#94A3B8" font-family="monospace" font-size="9">Usuario: operador@inacap.cl [OPERADOR]</text>
+  <text x="36" y="160" fill="#64748B" font-family="monospace" font-size="9">Distancia: 38.4 cm | Estado: UNLOCKED | Nonce: 0x4f82a1</text>
+  <text x="260" y="126" fill="#64748B" font-family="monospace" font-size="9">15:31:26</text>
+
+  <!-- Log Card 2 -->
+  <rect x="24" y="194" width="312" height="80" rx="8" fill="#0F172A" stroke="#EF4444" stroke-width="1"/>
+  <text x="36" y="216" fill="#EF4444" font-family="monospace" font-weight="bold" font-size="11">BLOQUEO_FAILSAFE_TEMPORIZADOR</text>
+  <text x="36" y="234" fill="#94A3B8" font-family="monospace" font-size="9">Emisor: SISTEMA_AUTONOMO [FAIL-SECURE]</text>
+  <text x="36" y="250" fill="#64748B" font-family="monospace" font-size="9">Causa: Expiración 3.5s paso libre | Estado: LOCKED</text>
+  <text x="260" y="216" fill="#64748B" font-family="monospace" font-size="9">15:31:29</text>
+
+  <!-- Log Card 3 -->
+  <rect x="24" y="284" width="312" height="80" rx="8" fill="#0F172A" stroke="#00E5FF" stroke-width="1"/>
+  <text x="36" y="306" fill="#00E5FF" font-family="monospace" font-weight="bold" font-size="11">PROXIMIDAD_LOCAL_SENSOR</text>
+  <text x="36" y="324" fill="#94A3B8" font-family="monospace" font-size="9">Sensor: HC-SR04 Exterior ESP-NOW</text>
+  <text x="36" y="340" fill="#64748B" font-family="monospace" font-size="9">Distancia: 4.8 cm (&lt; 8 cm) | Estado: UNLOCKED</text>
+  <text x="260" y="306" fill="#64748B" font-family="monospace" font-size="9">15:30:12</text>
+
+  <!-- Log Card 4 (Replay Rejection) -->
+  <rect x="24" y="374" width="312" height="80" rx="8" fill="#0F172A" stroke="#F59E0B" stroke-width="1"/>
+  <text x="36" y="396" fill="#F59E0B" font-family="monospace" font-weight="bold" font-size="11">INTENTO_INTRUSION_RECHAZADO</text>
+  <text x="36" y="414" fill="#94A3B8" font-family="monospace" font-size="9">Causa: REPLAY_ATTACK_NONCE_DUPLICADO</text>
+  <text x="36" y="430" fill="#64748B" font-family="monospace" font-size="9">Trama capturada retransmitida sin validez</text>
+  <text x="260" y="396" fill="#64748B" font-family="monospace" font-size="9">15:28:44</text>
+</svg>

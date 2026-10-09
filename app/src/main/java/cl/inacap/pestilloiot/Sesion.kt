@@ -64,18 +64,23 @@ object Sesion {
         Notificaciones.inicializarCanal(context)
     }
 
-    fun configurarCifrado(codigo6Digitos: String) {
-        if (codigo6Digitos.length >= 6) {
-            claveCifrado = Cripto.claveDesdeCodigo(codigo6Digitos)
+    fun configurarCifrado(codigo6Digitos: String): Boolean {
+        return if (codigo6Digitos.trim().length >= 6) {
+            claveCifrado = Cripto.claveDesdeCodigo(codigo6Digitos.trim())
+            true
         } else {
             claveCifrado = null
+            false
         }
     }
 
-    fun iniciarNodo(medioSel: MedioConexion, codigoPin: String) {
+    fun iniciarNodo(medioSel: MedioConexion, codigoPin: String): Boolean {
+        if (!configurarCifrado(codigoPin)) {
+            _ultimoLog.value = "ERROR DE SEGURIDAD: Cifrado obligatorio. Ingrese un PIN de al menos 6 dígitos."
+            return false
+        }
         modo.value = ModoOperacion.NODO
         medio.value = medioSel
-        configurarCifrado(codigoPin)
 
         cerrarEnlace()
         val nuevoEnlace: Enlace = if (medioSel == MedioConexion.BLUETOOTH) {
@@ -87,13 +92,17 @@ object Sesion {
         enlaceActivo = nuevoEnlace
         vincularObservadores(nuevoEnlace)
         nuevoEnlace.iniciarServidor(claveCifrado)
-        _ultimoLog.value = "Nodo iniciado en modo Servidor ($medioSel)"
+        _ultimoLog.value = "Nodo iniciado en modo Servidor ($medioSel) con AES-256-GCM"
+        return true
     }
 
-    fun conectarPanel(medioSel: MedioConexion, destino: String, codigoPin: String) {
+    fun conectarPanel(medioSel: MedioConexion, destino: String, codigoPin: String): Boolean {
+        if (!configurarCifrado(codigoPin)) {
+            _ultimoLog.value = "ERROR DE SEGURIDAD: Cifrado obligatorio. Ingrese un PIN de al menos 6 dígitos."
+            return false
+        }
         modo.value = ModoOperacion.PANEL
         medio.value = medioSel
-        configurarCifrado(codigoPin)
 
         cerrarEnlace()
         val nuevoEnlace: Enlace = if (medioSel == MedioConexion.BLUETOOTH) {
@@ -105,7 +114,8 @@ object Sesion {
         enlaceActivo = nuevoEnlace
         vincularObservadores(nuevoEnlace)
         nuevoEnlace.conectar(destino, claveCifrado)
-        _ultimoLog.value = "Panel conectando a $destino vía $medioSel..."
+        _ultimoLog.value = "Panel conectando a $destino vía $medioSel con AES-256-GCM..."
+        return true
     }
 
     private fun vincularObservadores(enlace: Enlace) {
@@ -137,10 +147,24 @@ object Sesion {
                 when (msg.tipo) {
                     TipoMensaje.CMD -> {
                         if (msg.clave == "latch") {
-                            if (msg.valor == "OPEN") {
-                                accionarAperturaNodo(fuente = "COMANDO_REMOTO")
+                            val validacion = Cripto.validarAntiReplay(msg.valor)
+                            if (validacion != null) {
+                                if (validacion.comando == "OPEN") {
+                                    // RBAC en el Nodo: Solo OPERADOR o ADMIN pueden ordenar apertura
+                                    if (validacion.rol == "OPERADOR" || validacion.rol == "ADMIN") {
+                                        accionarAperturaNodo(fuente = "REMOTO_${validacion.rol}_NONCE_${validacion.nonce.take(4)}")
+                                    } else {
+                                        _ultimoLog.value = "INTENTO DENEGADO: Rol '${validacion.rol}' no tiene permisos en este Nodo (RBAC)"
+                                        enlaceActivo?.enviar(Mensaje(TipoMensaje.ACK, "latch", "REJECTED_UNAUTHORIZED"))
+                                    }
+                                } else if (validacion.comando == "LOCK") {
+                                    forzarBloqueoSeguro("Bloqueo remoto solicitado por ${validacion.rol}")
+                                }
                             } else if (msg.valor == "LOCK") {
-                                forzarBloqueoSeguro("Bloqueo remoto solicitado")
+                                forzarBloqueoSeguro("Bloqueo de emergencia solicitado")
+                            } else {
+                                _ultimoLog.value = "VIOLACIÓN DE SEGURIDAD: Trama rechazada por fallo Anti-Replay o integridad"
+                                enlaceActivo?.enviar(Mensaje(TipoMensaje.ACK, "latch", "REJECTED_SECURITY_VIOLATION"))
                             }
                         }
                     }
@@ -258,8 +282,9 @@ object Sesion {
             return false
         }
 
-        enlaceActivo?.enviar(Mensaje(TipoMensaje.CMD, "latch", "OPEN"))
-        _ultimoLog.value = "Comando de apertura enviado..."
+        val payloadSeguro = Cripto.empaquetarComandoSeguro("OPEN", rolUsuario.value)
+        enlaceActivo?.enviar(Mensaje(TipoMensaje.CMD, "latch", payloadSeguro))
+        _ultimoLog.value = "Comando de apertura autenticado RBAC ($payloadSeguro) despachado..."
 
         // Registrar solicitud en Firestore
         FirestoreService.registrarEventoAcceso(

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.callbackFlow
 data class PerfilUsuario(
     val uid: String = "",
     val email: String = "",
-    val rol: String = "OBSERVADOR", // "OPERADOR" o "OBSERVADOR"
+    val rol: String = "OBSERVADOR", // "ADMIN", "OPERADOR" o "OBSERVADOR"
     val timestamp: Long = System.currentTimeMillis()
 )
 
@@ -25,6 +25,13 @@ data class AccesoLog(
     val distancia: Double = 0.0
 )
 
+/**
+ * Servicio de Autenticación y Telemetría en la Nube (Firebase Auth & Cloud Firestore).
+ * Implementa el principio estricto de Fail-Closed (Seguridad por Defecto):
+ * - Ante cualquier error de red, timeout o credencial no verificada, se DENEGA el acceso.
+ * - Los nuevos usuarios se registran exclusivamente con rol base "OBSERVADOR" (Menor Privilegio).
+ * - La elevación a "OPERADOR" o "ADMIN" requiere intervención explícita en base de datos.
+ */
 object FirestoreService {
 
     private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
@@ -35,6 +42,11 @@ object FirestoreService {
 
     fun usuarioActual(): FirebaseUser? = try { auth.currentUser } catch (_: Exception) { null }
 
+    /**
+     * Inicia sesión con Firebase Auth bajo política Fail-Closed.
+     * En caso de error de red, credenciales inválidas o indisponibilidad del servicio,
+     * se notifica un error explícito y se aborta el acceso.
+     */
     fun iniciarSesion(
         email: String,
         clave: String,
@@ -43,63 +55,38 @@ object FirestoreService {
     ) {
         val emailTrim = email.trim()
         if (emailTrim.isBlank() || clave.isBlank()) {
-            onError("Credenciales incompletas")
+            onError("Credenciales incompletas: Ingrese correo y contraseña")
             return
         }
 
-        // Determinar rol por defecto basado en email
-        val rolPorDefecto = if (emailTrim.lowercase().contains("operador") || emailTrim.lowercase().contains("admin")) "OPERADOR" else "OBSERVADOR"
-
         try {
-            var respondido = false
-            val handler = android.os.Handler(android.os.Looper.getMainLooper())
-            val timeoutRunnable = Runnable {
-                if (!respondido) {
-                    respondido = true
-                    // Fallback en caso de timeout de red / DNS en emulador
-                    onSuccess(emailTrim, rolPorDefecto)
-                }
-            }
-            handler.postDelayed(timeoutRunnable, 4000) // 4 segundos maximo de espera
-
             auth.signInWithEmailAndPassword(emailTrim, clave)
                 .addOnSuccessListener { result ->
-                    if (!respondido) {
-                        respondido = true
-                        handler.removeCallbacks(timeoutRunnable)
-                        val user = result.user
-                        if (user != null) {
-                            obtenerRolUsuario(user.uid, emailTrim) { rol ->
-                                onSuccess(user.email ?: emailTrim, rol)
-                            }
-                        } else {
-                            onSuccess(emailTrim, rolPorDefecto)
+                    val user = result.user
+                    if (user != null) {
+                        obtenerRolUsuario(user.uid) { rol ->
+                            onSuccess(user.email ?: emailTrim, rol)
                         }
+                    } else {
+                        onError("Acceso Denegado: Usuario no encontrado tras autenticación (Fail-Closed)")
                     }
                 }
                 .addOnFailureListener { e ->
-                    if (!respondido) {
-                        respondido = true
-                        handler.removeCallbacks(timeoutRunnable)
-                        val msg = e.localizedMessage ?: "Error de autenticación"
-                        // Si es error de red o timeout, permitir acceso local para demo
-                        if (msg.contains("network", ignoreCase = true) || msg.contains("timeout", ignoreCase = true) || msg.contains("unreachable", ignoreCase = true) || msg.contains("play services", ignoreCase = true)) {
-                            onSuccess(emailTrim, rolPorDefecto)
-                        } else {
-                            onError(msg)
-                        }
-                    }
+                    val msg = e.localizedMessage ?: "Error de autenticación"
+                    onError("Acceso Denegado: $msg (Fail-Closed)")
                 }
         } catch (ex: Exception) {
-            // Failsafe absoluto
-            onSuccess(emailTrim, rolPorDefecto)
+            onError("Acceso Denegado: Excepción en servicio de autenticación: ${ex.message} (Fail-Closed)")
         }
     }
 
+    /**
+     * Registra un nuevo usuario en Firebase Auth y crea su documento en Firestore
+     * con rol inicial estrictamente asignado a "OBSERVADOR" (Principio de Menor Privilegio).
+     */
     fun registrarUsuario(
         email: String,
         clave: String,
-        rol: String,
         onSuccess: (String, String) -> Unit,
         onError: (String) -> Unit
     ) {
@@ -109,93 +96,55 @@ object FirestoreService {
             return
         }
 
-        val rolFinal = rol.uppercase()
+        val rolAsignado = "OBSERVADOR" // Todo nuevo usuario inicia como OBSERVADOR
 
         try {
-            var respondido = false
-            val handler = android.os.Handler(android.os.Looper.getMainLooper())
-            val timeoutRunnable = Runnable {
-                if (!respondido) {
-                    respondido = true
-                    onSuccess(emailTrim, rolFinal)
-                }
-            }
-            handler.postDelayed(timeoutRunnable, 4000)
-
             auth.createUserWithEmailAndPassword(emailTrim, clave)
                 .addOnSuccessListener { result ->
-                    if (!respondido) {
-                        respondido = true
-                        handler.removeCallbacks(timeoutRunnable)
-                        val user = result.user
-                        if (user != null) {
-                            val perfil = PerfilUsuario(
-                                uid = user.uid,
-                                email = user.email ?: emailTrim,
-                                rol = rolFinal
-                            )
-                            db.collection(COLECCION_USUARIOS).document(user.uid)
-                                .set(perfil)
-                                .addOnSuccessListener {
-                                    onSuccess(user.email ?: emailTrim, rolFinal)
-                                }
-                                .addOnFailureListener {
-                                    onSuccess(user.email ?: emailTrim, rolFinal)
-                                }
-                        } else {
-                            onSuccess(emailTrim, rolFinal)
-                        }
+                    val user = result.user
+                    if (user != null) {
+                        val perfil = PerfilUsuario(
+                            uid = user.uid,
+                            email = user.email ?: emailTrim,
+                            rol = rolAsignado
+                        )
+                        db.collection(COLECCION_USUARIOS).document(user.uid)
+                            .set(perfil)
+                            .addOnSuccessListener {
+                                onSuccess(user.email ?: emailTrim, rolAsignado)
+                            }
+                            .addOnFailureListener { e ->
+                                onError("Fallo al persistir perfil de usuario en base de datos: ${e.localizedMessage}")
+                            }
+                    } else {
+                        onError("Fallo al crear usuario: Instancia nula")
                     }
                 }
                 .addOnFailureListener { e ->
-                    if (!respondido) {
-                        respondido = true
-                        handler.removeCallbacks(timeoutRunnable)
-                        val msg = e.localizedMessage ?: "Error de registro"
-                        if (msg.contains("network", ignoreCase = true) || msg.contains("timeout", ignoreCase = true) || msg.contains("play services", ignoreCase = true)) {
-                            onSuccess(emailTrim, rolFinal)
-                        } else {
-                            onError(msg)
-                        }
-                    }
+                    onError("Fallo en registro de credenciales: ${e.localizedMessage}")
                 }
         } catch (ex: Exception) {
-            onSuccess(emailTrim, rolFinal)
+            onError("Excepción en registro: ${ex.message}")
         }
     }
 
-    fun obtenerRolUsuario(uid: String, email: String = "", onResult: (String) -> Unit) {
-        val rolFallback = if (email.lowercase().contains("operador") || email.lowercase().contains("admin")) "OPERADOR" else "OBSERVADOR"
+    /**
+     * Obtiene el rol RBAC de Firestore para un UID determinado.
+     * Si no se encuentra el documento o hay error, asigna "OBSERVADOR" como failsafe de menor privilegio.
+     */
+    fun obtenerRolUsuario(uid: String, onResult: (String) -> Unit) {
         try {
-            var respondido = false
-            val handler = android.os.Handler(android.os.Looper.getMainLooper())
-            val timeoutRunnable = Runnable {
-                if (!respondido) {
-                    respondido = true
-                    onResult(rolFallback)
-                }
-            }
-            handler.postDelayed(timeoutRunnable, 2000)
-
             db.collection(COLECCION_USUARIOS).document(uid)
                 .get()
                 .addOnSuccessListener { snapshot ->
-                    if (!respondido) {
-                        respondido = true
-                        handler.removeCallbacks(timeoutRunnable)
-                        val rol = snapshot.getString("rol") ?: rolFallback
-                        onResult(rol)
-                    }
+                    val rol = snapshot.getString("rol") ?: "OBSERVADOR"
+                    onResult(rol.uppercase())
                 }
                 .addOnFailureListener {
-                    if (!respondido) {
-                        respondido = true
-                        handler.removeCallbacks(timeoutRunnable)
-                        onResult(rolFallback)
-                    }
+                    onResult("OBSERVADOR")
                 }
-        } catch (ex: Exception) {
-            onResult(rolFallback)
+        } catch (_: Exception) {
+            onResult("OBSERVADOR")
         }
     }
 
@@ -203,8 +152,8 @@ object FirestoreService {
         accion: String,
         estado: String,
         distancia: Double = 0.0,
-        email: String = try { auth.currentUser?.email ?: "operador@inacap.cl" } catch (_: Exception) { "operador@inacap.cl" },
-        rol: String = "OPERADOR"
+        email: String = try { auth.currentUser?.email ?: "observador@inacap.cl" } catch (_: Exception) { "observador@inacap.cl" },
+        rol: String = "OBSERVADOR"
     ) {
         val logMap = hashMapOf(
             "timestamp" to System.currentTimeMillis(),
@@ -218,12 +167,8 @@ object FirestoreService {
         try {
             db.collection(COLECCION_LOGS)
                 .add(logMap)
-                .addOnSuccessListener { docRef ->
-                    // Éxito en Cloud Firestore
-                }
-                .addOnFailureListener {
-                    // Silently ignore
-                }
+                .addOnSuccessListener { _ -> }
+                .addOnFailureListener { _ -> }
         } catch (_: Exception) {}
     }
 
@@ -256,8 +201,8 @@ object FirestoreService {
                             AccesoLog(
                                 id = doc.id,
                                 timestamp = if (ts > 0) ts else System.currentTimeMillis(),
-                                email = doc.getString("email") ?: "operador@inacap.cl",
-                                rol = doc.getString("rol") ?: "OPERADOR",
+                                email = doc.getString("email") ?: "observador@inacap.cl",
+                                rol = doc.getString("rol") ?: "OBSERVADOR",
                                 accion = doc.getString("accion") ?: "EVENTO_ACCESO",
                                 estado = doc.getString("estado") ?: "LOCKED",
                                 distancia = dist

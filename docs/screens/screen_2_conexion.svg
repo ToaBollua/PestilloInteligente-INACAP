@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 740" width="360" height="740">
+  <rect width="360" height="740" rx="36" fill="#0A0E17" stroke="#1E293B" stroke-width="4"/>
+  <text x="24" y="28" fill="#94A3B8" font-family="monospace" font-size="11">15:31</text>
+  <text x="290" y="28" fill="#94A3B8" font-family="monospace" font-size="11">📶 84%</text>
+  <!-- App Bar -->
+  <rect x="0" y="44" width="360" height="48" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="20" y="74" fill="#00E676" font-family="monospace" font-weight="bold" font-size="13">ENLACE // CONEXIÓN NODO</text>
+  
+  <!-- User Pill -->
+  <rect x="24" y="104" width="312" height="42" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="36" y="126" fill="#F8FAFC" font-family="monospace" font-size="11">operador@inacap.cl</text>
+  <rect x="240" y="112" width="86" height="24" rx="4" fill="#00E676" fill-opacity="0.2"/>
+  <text x="283" y="128" text-anchor="middle" fill="#00E676" font-family="monospace" font-weight="bold" font-size="10">OPERADOR</text>
+
+  <!-- Step 1: Mode -->
+  <text x="24" y="172" fill="#00E676" font-family="monospace" font-weight="bold" font-size="11">1. SELECCIONA EL MODO OPERATIVO:</text>
+  <rect x="24" y="184" width="150" height="40" rx="8" fill="#1E293B" stroke="#00E676" stroke-width="1.5"/>
+  <text x="99" y="209" text-anchor="middle" fill="#00E676" font-family="monospace" font-weight="bold" font-size="11">🎛 Panel Control</text>
+  <rect x="186" y="184" width="150" height="40" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="261" y="209" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="11">📡 Nodo IoT</text>
+
+  <!-- Step 2: Medium -->
+  <text x="24" y="248" fill="#00E676" font-family="monospace" font-weight="bold" font-size="11">2. MEDIO DE COMUNICACIÓN:</text>
+  <rect x="24" y="260" width="150" height="40" rx="8" fill="#1E293B" stroke="#00E5FF" stroke-width="1.5"/>
+  <text x="99" y="285" text-anchor="middle" fill="#00E5FF" font-family="monospace" font-weight="bold" font-size="11">🌐 Wi-Fi TCP (5050)</text>
+  <rect x="186" y="260" width="150" height="40" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="261" y="285" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="11">🔵 Bluetooth SPP</text>
+
+  <!-- IP Input -->
+  <rect x="24" y="320" width="312" height="52" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="36" y="340" fill="#94A3B8" font-family="monospace" font-size="9">DIRECCIÓN IP GATEWAY (TCP 5050)</text>
+  <text x="36" y="360" fill="#F8FAFC" font-family="monospace" font-size="13">192.168.4.1</text>
+
+  <!-- Suggestion Chips -->
+  <rect x="24" y="382" width="120" height="24" rx="12" fill="#0F172A" stroke="#00E676" stroke-width="1"/>
+  <text x="84" y="398" text-anchor="middle" fill="#00E676" font-family="monospace" font-size="9">ESP32 AP 192.168.4.1</text>
+  <rect x="150" y="382" width="90" height="24" rx="12" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="195" y="398" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="9">Waydroid</text>
+  <rect x="246" y="382" width="90" height="24" rx="12" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="291" y="398" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="9">Localhost</text>
+
+  <!-- PIN Input -->
+  <rect x="24" y="420" width="312" height="52" rx="8" fill="#0F172A" stroke="#00E676" stroke-width="1"/>
+  <text x="36" y="440" fill="#00E676" font-family="monospace" font-size="9">PIN CIFRADO AES-256 (6 DÍGITOS OBLIGATORIO)</text>
+  <text x="36" y="460" fill="#F8FAFC" font-family="monospace" font-size="14">8 4 9 2 0 1</text>
+
+  <!-- Connect Button -->
+  <rect x="24" y="500" width="312" height="50" rx="10" fill="#00E676"/>
+  <text x="180" y="531" text-anchor="middle" fill="#0A0E17" font-family="monospace" font-weight="bold" font-size="13">VINCULAR Y ENLAZAR PANEL</text>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 740" width="360" height="740">
+  <rect width="360" height="740" rx="36" fill="#0A0E17" stroke="#1E293B" stroke-width="4"/>
+  <text x="24" y="28" fill="#94A3B8" font-family="monospace" font-size="11">15:33</text>
+  <text x="290" y="28" fill="#94A3B8" font-family="monospace" font-size="11">📶 84%</text>
+  <!-- App Bar -->
+  <rect x="0" y="44" width="360" height="48" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="20" y="74" fill="#00E5FF" font-family="monospace" font-weight="bold" font-size="13">NODO IOT // ACTUADOR PUERTA</text>
+
+  <!-- Latch Graphic -->
+  <rect x="24" y="104" width="312" height="200" rx="12" fill="#0F172A" stroke="#00E676" stroke-width="1"/>
+  <circle cx="180" cy="180" r="45" fill="#00E676" fill-opacity="0.15" stroke="#00E676" stroke-width="3"/>
+  <text x="180" y="190" text-anchor="middle" font-size="36">🔓</text>
+  <text x="180" y="250" text-anchor="middle" fill="#00E676" font-family="monospace" font-weight="bold" font-size="18">PESTILLO ABIERTO (90°)</text>
+  <text x="180" y="272" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10">PASO LIBRE EN CURSO (AUTO-LOCK EN 3S)</text>
+
+  <!-- Hardware Indicators -->
+  <rect x="24" y="316" width="150" height="70" rx="8" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="36" y="338" fill="#94A3B8" font-family="monospace" font-size="9">SERVOMOTOR SG90</text>
+  <text x="36" y="364" fill="#00E676" font-family="monospace" font-weight="bold" font-size="16">ÁNGULO: 90°</text>
+
+  <rect x="186" y="316" width="150" height="70" rx="8" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="198" y="338" fill="#94A3B8" font-family="monospace" font-size="9">LEDS ESTADO</text>
+  <text x="198" y="364" fill="#00E676" font-family="monospace" font-weight="bold" font-size="14">VERDE (ON) / ROJO (OFF)</text>
+
+  <!-- Proximity Slider Simulation -->
+  <rect x="24" y="400" width="312" height="100" rx="10" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="36" y="424" fill="#00E5FF" font-family="monospace" font-size="11">SIMULADOR SENSOR EXTERIOR (HC-SR04):</text>
+  <rect x="36" y="445" width="288" height="8" rx="4" fill="#1E293B"/>
+  <rect x="36" y="445" width="40" height="8" rx="4" fill="#EF4444"/>
+  <circle cx="76" cy="449" r="8" fill="#00E676"/>
+  <text x="36" y="475" fill="#EF4444" font-family="monospace" font-weight="bold" font-size="12">Distancia: 5.2 cm &lt; 8 cm -&gt; ACTIVACIÓN PROXIMIDAD</text>
+
+  <!-- Security Verification Box -->
+  <rect x="24" y="515" width="312" height="120" rx="10" fill="#030712" stroke="#00E676" stroke-width="1"/>
+  <text x="36" y="538" fill="#00E676" font-family="monospace" font-weight="bold" font-size="10">🛡 VERIFICACIÓN EN NODO RECEPTOR:</text>
+  <text x="36" y="558" fill="#94A3B8" font-family="monospace" font-size="9">✓ Validación RBAC: Emisor autenticado como OPERADOR</text>
+  <text x="36" y="574" fill="#94A3B8" font-family="monospace" font-size="9">✓ Filtro Anti-Replay: Nonce 0x4f82a1 registrado</text>
+  <text x="36" y="590" fill="#94A3B8" font-family="monospace" font-size="9">✓ Ventana Timestamp: +120ms (Válido dentro de 30s)</text>
+  <text x="36" y="606" fill="#00E676" font-family="monospace" font-size="9">✓ Descifrado AES-GCM: Tag de 128-bits íntegro</text>
+</svg>
