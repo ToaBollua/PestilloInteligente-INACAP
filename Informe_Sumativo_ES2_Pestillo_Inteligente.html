@@ -1,851 +1,804 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INFORME EVALUACIÓN SUMATIVA 2 (ES2) — PESTILLO INTELIGENTE IoT (TI3042)</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #f8fafc;
-            --surface-color: #ffffff;
-            --border-color: #e2e8f0;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --text-muted: #64748b;
-            --primary-color: #0284c7;
-            --primary-dark: #0369a1;
-            --primary-light: #e0f2fe;
-            --accent-green: #16a34a;
-            --accent-green-bg: #dcfce7;
-            --accent-amber: #d97706;
-            --accent-amber-bg: #fef3c7;
-            --accent-red: #dc2626;
-            --accent-red-bg: #fee2e2;
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --font-mono: 'Fira Code', monospace;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INFORME SUMATIVO U2 // PESTILLO INTELIGENTE IOT - INACAP TI3042</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600;700&display=swap');
+    
+    :root {
+      --bg: #07090E;
+      --card-bg: #0D111A;
+      --panel-bg: #121824;
+      --border: #1E293B;
+      --neon-green: #00E676;
+      --neon-cyan: #00E5FF;
+      --neon-red: #FF3366;
+      --neon-yellow: #FFD600;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --font-mono: 'Fira Code', monospace;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      line-height: 1.6;
+      padding: 24px;
+      font-size: 13px;
+    }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            font-family: var(--font-sans);
-            padding: 40px 20px;
-            font-size: 14px;
-            line-height: 1.65;
-        }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-        .document-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 50px 60px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
+    /* HEADER CYBERPUNK */
+    .header-box {
+      border: 2px solid var(--neon-green);
+      background: linear-gradient(180deg, rgba(0,230,118,0.05) 0%, rgba(13,17,26,0.9) 100%);
+      padding: 24px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      box-shadow: 0 0 20px rgba(0,230,118,0.15);
+      position: relative;
+    }
 
-        .header-meta {
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 25px;
-            margin-bottom: 35px;
-        }
+    .header-title {
+      color: var(--neon-green);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
 
-        .badge-institution {
-            display: inline-block;
-            background: var(--primary-light);
-            color: var(--primary-dark);
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 4px 10px;
-            border-radius: 4px;
-            margin-bottom: 12px;
-        }
+    .header-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--border);
+      font-size: 12px;
+    }
 
-        h1 {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--text-primary);
-            line-height: 1.3;
-            margin-bottom: 10px;
-        }
+    .meta-item span {
+      color: var(--neon-cyan);
+      font-weight: 600;
+    }
 
-        h2 {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-top: 35px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
+    /* SECCIONES Y TARJETAS */
+    .section-title {
+      color: var(--neon-cyan);
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 32px 0 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+    }
 
-        h3 {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-top: 22px;
-            margin-bottom: 10px;
-        }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
 
-        p {
-            margin-bottom: 14px;
-            color: var(--text-secondary);
-        }
+    .card.highlight {
+      border-color: var(--neon-green);
+      box-shadow: 0 0 15px rgba(0,230,118,0.08);
+    }
 
-        ul, ol {
-            margin-bottom: 16px;
-            padding-left: 24px;
-            color: var(--text-secondary);
-        }
+    .card.alert {
+      border-color: var(--neon-red);
+      background: rgba(255, 51, 102, 0.03);
+    }
 
-        li {
-            margin-bottom: 6px;
-        }
+    /* TABLAS ESTILO RETRO-NEOCITIES */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 12px;
+    }
 
-        .meta-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px 25px;
-            background: #f1f5f9;
-            padding: 18px 20px;
-            border-radius: 6px;
-            font-size: 13px;
-            margin-top: 15px;
-        }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+    }
 
-        .meta-item strong {
-            color: var(--text-primary);
-        }
+    th {
+      background: var(--panel-bg);
+      color: var(--neon-green);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
 
-        .table-responsive {
-            overflow-x: auto;
-            margin: 20px 0;
-        }
+    tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.015);
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            background: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            overflow: hidden;
-        }
+    tr:hover {
+      background: rgba(0, 229, 255, 0.05);
+    }
 
-        th {
-            background: #f8fafc;
-            color: var(--text-primary);
-            font-weight: 600;
-            text-align: left;
-            padding: 10px 14px;
-            border-bottom: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color);
-        }
+    .status-ok {
+      color: var(--neon-green);
+      font-weight: 600;
+    }
 
-        td {
-            padding: 10px 14px;
-            border-bottom: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            vertical-align: top;
-        }
+    .status-err {
+      color: var(--neon-red);
+      font-weight: 600;
+    }
 
-        tr:last-child td {
-            border-bottom: none;
-        }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
 
-        th:last-child, td:last-child {
-            border-right: none;
-        }
+    .badge-green { background: rgba(0,230,118,0.15); color: var(--neon-green); border: 1px solid var(--neon-green); }
+    .badge-cyan { background: rgba(0,229,255,0.15); color: var(--neon-cyan); border: 1px solid var(--neon-cyan); }
+    .badge-red { background: rgba(255,51,102,0.15); color: var(--neon-red); border: 1px solid var(--neon-red); }
 
-        tr:hover td {
-            background: #f8fafc;
-        }
+    /* CODE BLOCKS */
+    pre, code {
+      font-family: var(--font-mono);
+      background: #030508;
+    }
 
-        .badge-success {
-            background: var(--accent-green-bg);
-            color: var(--accent-green);
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            display: inline-block;
-        }
+    pre {
+      padding: 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      margin: 12px 0;
+      color: #E2E8F0;
+      font-size: 11.5px;
+    }
 
-        .badge-warning {
-            background: var(--accent-amber-bg);
-            color: var(--accent-amber);
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            display: inline-block;
-        }
+    /* GALLERY OF SCREENS */
+    .screens-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
 
-        .badge-danger {
-            background: var(--accent-red-bg);
-            color: var(--accent-red);
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            display: inline-block;
-        }
+    .screen-item {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
 
-        pre, code {
-            font-family: var(--font-mono);
-            font-size: 12px;
-        }
+    .screen-item:hover {
+      border-color: var(--neon-green);
+      transform: translateY(-2px);
+    }
 
-        code {
-            background: #f1f5f9;
-            color: var(--primary-dark);
-            padding: 2px 5px;
-            border-radius: 3px;
-            border: 1px solid #e2e8f0;
-        }
+    .screen-item svg {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
 
-        pre {
-            background: #0f172a;
-            color: #f8fafc;
-            padding: 16px 18px;
-            border-radius: 6px;
-            overflow-x: auto;
-            margin: 15px 0;
-            line-height: 1.5;
-        }
+    .screen-label {
+      margin-top: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--neon-cyan);
+    }
 
-        pre code {
-            background: transparent;
-            color: inherit;
-            padding: 0;
-            border: none;
-        }
+    .diagram-container {
+      background: var(--panel-bg);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,229,255,0.08);
+    }
 
-        .repo-banner {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-left: 4px solid var(--accent-green);
-            padding: 14px 18px;
-            border-radius: 6px;
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .repo-banner a {
-            color: #15803d;
-            font-weight: 700;
-            text-decoration: underline;
-            font-family: var(--font-mono);
-            font-size: 13px;
-        }
-
-        .info-callout {
-            background: var(--primary-light);
-            border-left: 4px solid var(--primary-color);
-            padding: 14px 18px;
-            border-radius: 4px;
-            margin: 16px 0;
-            color: var(--primary-dark);
-            font-size: 13px;
-        }
-
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            .document-container {
-                box-shadow: none;
-                border: none;
-                padding: 0;
-                max-width: 100%;
-            }
-        }
-    </style>
+    .diagram-container svg {
+      width: 100%;
+      height: auto;
+      max-width: 900px;
+    }
+  </style>
 </head>
 <body>
-
-<div class="document-container">
-
-    <!-- HEADER / METADATOS FORMALES -->
-    <div class="header-meta">
-        <span class="badge-institution">INACAP · INGENIERÍA EN INFORMÁTICA · TI3042</span>
-        <h1>INFORME DE EVALUACIÓN SUMATIVA 2 (ES2)</h1>
-        <p style="font-size: 15px; color: var(--text-primary); font-weight: 600; margin-bottom: 12px;">
-            SISTEMA DE PESTILLO INTELIGENTE IoT DISTRIBUIDO: APLICACIÓN MÓVIL ANDROID, INTERCONEXIÓN INALÁMBRICA Y CIBERSEGURIDAD INDUSTRIAL OT
-        </p>
-
-        <div class="repo-banner">
-            <div>
-                <strong>Repositorio Oficial en GitHub:</strong><br>
-                <a href="https://github.com/ToaBollua/PestilloInteligente-INACAP" target="_blank">https://github.com/ToaBollua/PestilloInteligente-INACAP</a>
-            </div>
-            <span class="badge-success">Código & Pruebas Disponibles</span>
-        </div>
-
-        <div class="meta-grid">
-            <div class="meta-item"><strong>Asignatura:</strong> Aplicaciones Móviles para IoT (TI3042)</div>
-            <div class="meta-item"><strong>Docente Evaluador:</strong> Rodrigo Alejandro Santander Vera</div>
-            <div class="meta-item"><strong>Unidad de Aprendizaje:</strong> Unidad 2: Aplicaciones Móviles Android para Dispositivos IoT</div>
-            <div class="meta-item"><strong>Integrantes:</strong> Nicolás Anrique, Camilo Núñez, Diego Ibeas</div>
-            <div class="meta-item"><strong>Aprendizaje Esperado (AE 2.1):</strong> Resuelve problemática de interconexión IoT mediante app móvil.</div>
-            <div class="meta-item"><strong>Fecha de Entrega:</strong> Octubre de 2026</div>
-        </div>
-    </div>
-
-    <!-- MATRIZ DE TRAZABILIDAD -->
-    <h2>Matriz de Trazabilidad y Cumplimiento de Criterios (Rúbrica Unidad 2)</h2>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 80px;">Criterio</th>
-                    <th>Requisito de la Guía de Aprendizaje</th>
-                    <th>Implementación Concreta en el Proyecto</th>
-                    <th style="width: 110px;">Sección</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>2.1.1</strong></td>
-                    <td>Identifica herramientas de desarrollo móvil, siguiendo estándar de diseño Android.</td>
-                    <td>Kotlin 2.0+, Jetpack Compose (Material 3), Gradle Kotlin DSL, Corrutinas (<code>Dispatchers.IO</code>), StateFlow y Firebase Auth.</td>
-                    <td>Sección II</td>
-                </tr>
-                <tr>
-                    <td><strong>2.1.2</strong></td>
-                    <td>Produce aplicación móvil Android, con uso de conexiones inalámbricas pertinentes.</td>
-                    <td>Doble capa de enlace: Bluetooth Clásico RFCOMM (SPP) y Wi-Fi TCP Sockets en <strong>Puerto 5050</strong>, con protocolo estructurado <code>TIPO;CLAVE;VALOR</code>.</td>
-                    <td>Sección III</td>
-                </tr>
-                <tr>
-                    <td><strong>2.1.3</strong></td>
-                    <td>Emplea estándar ISO de seguridad IoT y lineamiento de industria OT.</td>
-                    <td>ISO/IEC 27400:2022 (AES-256-GCM + PBKDF2), RBAC (<em>Operador</em> vs <em>Observador</em>), <code>usesCleartextTraffic="false"</code>, y lineamiento OT IEC 62443 <em>Fail-Secure</em> (bloqueo a 0° ante desconexión). Matriz autocrítica de brechas.</td>
-                    <td>Sección IV</td>
-                </tr>
-                <tr>
-                    <td><strong>2.1.4</strong></td>
-                    <td>Demuestra interconexión entre aplicaciones móviles mediante conexión inalámbrica.</td>
-                    <td>Interconexión M2M bidireccional entre Dispositivo A (Modo Nodo) y Dispositivo B (Modo Panel), con <strong>7/7 pruebas unitarias nativas Android aprobadas</strong> en JUnit 4.</td>
-                    <td>Sección V</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- SECCIÓN I -->
-    <h2>I. Definición del Proyecto y Problemática IoT (Paso 1)</h2>
-    <h3>1.1 Diagnóstico de la Problemática en Controles de Acceso Convencionales</h3>
-    <p>
-        En los sistemas de control de acceso perimetral estándar (chapas eléctricas, cerraduras magnéticas y teclados numéricos comerciales), existe una vulnerabilidad física estructural: <strong>el mecanismo de autenticación exterior comparte el mismo gabinete o canaleta de cableado que el actuador de retención</strong>. Un atacante físico puede retirar el panel externo, acceder a las líneas de 12V y forzar la apertura del recinto simplemente puenteando las líneas de alimentación eléctrica.
-    </p>
-    <p>Asimismo, estos sistemas adolecen de tres deficiencias operacionales críticas:</p>
-    <ul>
-        <li><strong>Ausencia de Telemetría Remota:</strong> El usuario no puede conocer en tiempo real si el cerrojo quedó físicamente bloqueado o destrabado tras abandonar las instalaciones.</li>
-        <li><strong>Inexistencia de Trazabilidad de Auditoría:</strong> No existe registro cronológico con marcas de tiempo (<em>timestamps</em>) sobre quién accionó la cerradura o qué eventos de proximidad ocurrieron en el exterior.</li>
-        <li><strong>Pérdida de Control de Acceso Delegado:</strong> La entrega de llaves físicas o contraseñas compartidas no permite revocación dinámica ni distinción de privilegios jerárquicos.</li>
-    </ul>
-
-    <h3>1.2 Solución Propuesta: Ecosistema Móvil Android M2M con Rol Dual</h3>
-    <p>
-        Se diseñó e implementó una aplicación móvil nativa en Android que resuelve esta problemática mediante una arquitectura desacoplada y distribuida. La aplicación permite operar en dos modos según el rol asignado al dispositivo:
-    </p>
-    <ul>
-        <li><strong>Dispositivo A — Modo Nodo IoT (Servidor de Cerrojo / Gateway Periférico):</strong> Simula el sensor de proximidad ultrasónico exterior (HC-SR04) y supervisa el estado angular del servomotor SG90 (0° Bloqueado / 90° Abierto durante 3000 ms con retorno automático). Ejecuta una corrutina de supervisión <em>Fail-Secure</em> que fuerza el retorno inmediato a bloqueo mecánico si se interrumpe la comunicación inalámbrica.</li>
-        <li><strong>Dispositivo B — Modo Panel de Control (Cliente Operador):</strong> Panel de mando que se conecta de forma inalámbrica al Nodo IoT, autentica al usuario mediante Firebase Auth, valida su rol jerárquico (RBAC), recibe telemetría de proximidad en tiempo real y permite emitir comandos de destrabe cifrados de un solo toque, registrando cada evento en Cloud Firestore.</li>
-    </ul>
-
-    <!-- SECCIÓN II -->
-    <h2>II. Selección y Justificación de Herramientas de Desarrollo Móvil (Paso 1 y Paso 3)</h2>
-    <p><em>Cumplimiento estricto del Criterio de Evaluación 2.1.1.</em></p>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 150px;">Herramienta / Tecnología</th>
-                    <th style="width: 100px;">Versión</th>
-                    <th>Justificación Técnica de Selección</th>
-                    <th style="width: 150px;">Rol en el Proyecto</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>Lenguaje: Kotlin</strong></td>
-                    <td><code>2.0.21</code></td>
-                    <td>Lenguaje oficial de Android. Seguridad contra nulos (<em>Null-Safety</em>), sintaxis concisa y soporte nativo de Corrutinas para asincronía.</td>
-                    <td>Lógica de negocio, capa de red y criptografía.</td>
-                </tr>
-                <tr>
-                    <td><strong>UI: Jetpack Compose</strong></td>
-                    <td>BoM <code>2024.09.00</code></td>
-                    <td>Toolkit declarativo moderno. Elimina la sobrecarga de inflado de XML y sincroniza el estado de la UI reactivamente.</td>
-                    <td>Construcción de las 5 pantallas de la interfaz.</td>
-                </tr>
-                <tr>
-                    <td><strong>Material Design 3</strong></td>
-                    <td>Core M3</td>
-                    <td>Estándar de diseño moderno de Google con componentes de alto contraste, tipografía escalable y accesibilidad.</td>
-                    <td>Estilizado de tarjetas, controles y diálogos.</td>
-                </tr>
-                <tr>
-                    <td><strong>Coroutines & Flow</strong></td>
-                    <td><code>1.8.1</code></td>
-                    <td>Manejo de I/O de red en hilos secundarios (<code>Dispatchers.IO</code>) sin congelar la interfaz (<code>Dispatchers.Main</code>). Emisión reactiva con <code>StateFlow</code>.</td>
-                    <td>Sockets TCP, Bluetooth RFCOMM y watchdog.</td>
-                </tr>
-                <tr>
-                    <td><strong>Firebase Auth</strong></td>
-                    <td>BoM <code>33.7.0</code></td>
-                    <td>Servicio de autenticación en la nube mediante tokens JWT seguros con expiración automática.</td>
-                    <td>Login de usuarios y sesión segura.</td>
-                </tr>
-                <tr>
-                    <td><strong>Cloud Firestore</strong></td>
-                    <td>BoM <code>33.7.0</code></td>
-                    <td>Base de datos documental NoSQL con sincronización en tiempo real (<code>SnapshotListener</code>) y soporte offline.</td>
-                    <td>Registro inmutable de accesos y roles RBAC.</td>
-                </tr>
-                <tr>
-                    <td><strong>Java Crypto (JCA)</strong></td>
-                    <td>Android API 34</td>
-                    <td>Primitivas criptográficas ejecutadas por proveedores certificados del sistema operativo (<code>AndroidOpenSSL</code>).</td>
-                    <td>AES-256-GCM y PBKDF2WithHmacSHA256.</td>
-                </tr>
-                <tr>
-                    <td><strong>JUnit 4</strong></td>
-                    <td><code>4.13.2</code></td>
-                    <td>Framework de pruebas unitarias automatizadas para validar lógica de protocolos y funciones criptográficas en Gradle.</td>
-                    <td>Suite de pruebas unitarias nativas Android.</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- SECCIÓN III -->
-    <h2>III. Diseño e Implementación de la Comunicación Inalámbrica (Paso 2 y Paso 3)</h2>
-    <p><em>Cumplimiento estricto del Criterio de Evaluación 2.1.2.</em></p>
+  <div class="container">
     
-    <h3>3.1 Capa de Transporte Dual Abstracta</h3>
-    <p>
-        Para asegurar la operación del control de acceso tanto en entornos aislados sin cobertura como en redes locales, se implementó una interfaz polimórfica (<code>Enlace.kt</code>) con dos transportes seleccionables:
-    </p>
-    <ul>
-        <li><strong>Bluetooth Clásico RFCOMM (SPP):</strong> UUID estandarizado <code>00001101-0000-1000-8000-00805F9B34FB</code>. Enlace punto a punto de corto alcance (hasta 10 metros) que opera sin enrutadores ni conexión a Internet. Es el canal ideal para operar frente a la puerta física.</li>
-        <li><strong>Wi-Fi TCP Sockets (Puerto Unificado 5050):</strong> Enlace cliente-servidor sobre sockets TCP/IP estándar (<code>ServerSocket</code> y <code>Socket</code>). Permite conectar dos teléfonos en la misma red local o mediante Soft-AP (punto de acceso móvil) con alcances superiores a 30 metros y latencias menores a 10 ms.</li>
-    </ul>
-
-    <h3>3.2 Protocolo de Mensajería M2M</h3>
-    <p>La comunicación utiliza tramas delimitadas por <code>\n</code> bajo la sintaxis: <code>TIPO;CLAVE;VALOR</code>.</p>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th>Trama</th>
-                    <th>Emisor $\rightarrow$ Receptor</th>
-                    <th>Descripción Técnica del Evento</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>CMD;latch;OPEN</code></td>
-                    <td>Dispositivo B $\rightarrow$ Dispositivo A</td>
-                    <td>Orden de destrabe temporal emitida por el Operador.</td>
-                </tr>
-                <tr>
-                    <td><code>CMD;latch;LOCK</code></td>
-                    <td>Dispositivo B $\rightarrow$ Dispositivo A</td>
-                    <td>Orden de bloqueo forzado inmediato.</td>
-                </tr>
-                <tr>
-                    <td><code>LECTURA;dist;4.2</code></td>
-                    <td>Dispositivo A $\rightarrow$ Dispositivo B</td>
-                    <td>Telemetría periódica de distancia (cm) del sensor ultrasónico HC-SR04.</td>
-                </tr>
-                <tr>
-                    <td><code>LECTURA;latch;LOCKED</code></td>
-                    <td>Dispositivo A $\rightarrow$ Dispositivo B</td>
-                    <td>Notificación del estado mecánico angular del cerrojo.</td>
-                </tr>
-                <tr>
-                    <td><code>ACK;latch;OPEN</code></td>
-                    <td>Dispositivo A $\rightarrow$ Dispositivo B</td>
-                    <td>Confirmación de recepción y ejecución física de la orden.</td>
-                </tr>
-                <tr>
-                    <td><code>INFO;sys;FAILSAFE</code></td>
-                    <td>Dispositivo A $\rightarrow$ Dispositivo B</td>
-                    <td>Alerta de activación del protocolo de retorno seguro por desconexión.</td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- HEADER -->
+    <div class="header-box">
+      <div class="header-title">⚡ INFORME TÉCNICO SUMATIVO U2 // PESTILLO INTELIGENTE IOT</div>
+      <p style="color: var(--text-muted);">EVALUACIÓN SUMATIVA 2 (ES2) // INACAP - APLICACIONES MÓVILES PARA IOT (TI3042)</p>
+      
+      <div class="header-meta">
+        <div class="meta-item"><span>INTEGRANTES:</span> Camilo Núñez, Diego Ibeas, Bollua (El Arquitecto)</div>
+        <div class="meta-item"><span>INSTITUCIÓN:</span> INACAP Sede Santiago Sur / Valparaíso</div>
+        <div class="meta-item"><span>REPOSITORIO:</span> <a href="https://github.com/ToaBollua/PestilloInteligente-INACAP.git" target="_blank" style="color: var(--neon-green); text-decoration: none;">github.com/ToaBollua/PestilloInteligente-INACAP (master)</a></div>
+        <div class="meta-item"><span>ESTADO AUDITORÍA:</span> <span class="badge badge-green">15/15 TESTS PASS</span> | <span class="badge badge-cyan">APK ASSEMBLED</span></div>
+      </div>
     </div>
 
-    <h3>3.3 Estructura de Pantallas de la Aplicación Móvil</h3>
-    <div class="info-callout">
-        <strong>Aclaración de Pantallas:</strong> El flujo principal consta de <strong>4 pantallas base</strong> ilustradas en el mockup secuencial, más <strong>1 pantalla secundaria modal de auditoría</strong> (<code>PantallaHistorial.kt</code>), totalizando 5 componentes en Jetpack Compose.
-    </div>
-    <ol>
-        <li><strong><code>PantallaLogin.kt</code>:</strong> Formulario de autenticación con Firebase Auth. Resuelve el rol del usuario (<em>Operador</em> o <em>Observador</em>).</li>
-        <li><strong><code>PantallaConexion.kt</code>:</strong> Selector operativo. Permite conmutar rol (<em>Nodo IoT</em> vs <em>Panel Control</em>), medio (<em>Bluetooth</em> vs <em>Wi-Fi TCP</em> en <strong>puerto 5050</strong>) y clave de derivación de 6 dígitos.</li>
-        <li><strong><code>PantallaNodo.kt</code>:</strong> Vista del simulador de cerradura física. Muestra el estado del servo SG90 (Bloqueado/Abierto), tiempo de auto-cierre (3000 ms), slider para simular distancia HC-SR04 y logs del socket.</li>
-        <li><strong><code>PantallaPanel.kt</code>:</strong> Panel de control del Operador. Presenta tacómetro de distancia exterior en tiempo real, botón "ABRIR PESTILLO" (solo habilitado para rol Operador) y resumen de los últimos 3 eventos.</li>
-        <li><strong><code>PantallaHistorial.kt</code>:</strong> Vista modal de auditoría accesible mediante el icono de pergamino (📜) en la barra superior de <code>PantallaPanel.kt</code>. Consulta y despliega la colección <code>accesos</code> de Cloud Firestore.</li>
-    </ol>
-
-    <!-- SECCIÓN IV -->
-    <h2>IV. Implementación de Ciberseguridad IoT y Lineamientos Industriales OT (Paso 3)</h2>
-    <p><em>Cumplimiento estricto del Criterio de Evaluación 2.1.3.</em></p>
-
-    <h3>4.1 Adopción de la Norma ISO/IEC 27400:2022</h3>
-    <ul>
-        <li><strong>Cifrado Autenticado AES-256-GCM:</strong> Todas las tramas se cifran simétricamente en modo GCM con un IV aleatorio de 12 bytes (`SecureRandom`) y un Tag de autenticación de 128 bits (16 bytes). Si un atacante intercepta y modifica un solo bit, la verificación matemática del tag falla y la trama es descartada (`null`), evitando inyecciones.</li>
-        <li><strong>Derivación de Claves PBKDF2:</strong> Las llaves secretas no se guardan en texto claro. Se derivan a partir de un PIN de 6 dígitos mediante <code>PBKDF2WithHmacSHA256</code> con 10.000 rondas de hashing y sal fija pre-compartida.</li>
-        <li><strong>Control de Acceso Basado en Roles (RBAC):</strong> Los usuarios con rol <em>Observador</em> solo pueden leer telemetría e historial; la interfaz bloquea la emisión de comandos de apertura física.</li>
-        <li><strong>Seguridad en Manifiesto Android:</strong> Se configuró <code>android:usesCleartextTraffic="false"</code> y <code>android:allowBackup="false"</code> para impedir extracción de datos mediante <code>adb backup</code>.</li>
-    </ul>
-
-    <h3>4.2 Lineamiento de Seguridad Industrial OT (IEC 62443 / Fail-Secure)</h3>
-    <p>
-        En tecnología de operaciones (OT), el principio rector es la <strong>seguridad física de las instalaciones (*Safety State*)</strong>. La corrutina en <code>Sesion.kt</code> supervisa continuamente el estado del enlace:
-    </p>
-    <pre><code>// Supervisión continua del enlace en Sesion.kt
-enlace.estado.collectLatest { est ->
-    _estadoEnlace.value = est
-    if (est == EstadoEnlace.DESCONECTADO || est == EstadoEnlace.ERROR) {
-        // Lineamiento OT IEC 62443: Forzar retorno a estado seguro
-        if (modo.value == ModoOperacion.NODO && _latchState.value != "LOCKED") {
-            forzarBloqueoSeguro("Enlace interrumpido - Fail-Secure activado")
-        }
-    }
-}</code></pre>
-    <p>
-        Si la señal inalámbrica se corta o el socket cae, el cerrojo retorna forzosamente a <strong>`0° (LOCKED)`</strong> en menos de 5000 ms, impidiendo que una falla de red deje el acceso desprotegido.
-    </p>
-
-    <h3>4.3 Matriz Autocrítica de Brechas de Seguridad Residuales de la Propia Solución (Criterio 1.1.2.2 y 2.1.3)</h3>
-    <p>
-        <em>Evaluación autocrítica de los riesgos y vulnerabilidades remanentes que persisten en el diseño actual del prototipo y sus propuestas de mitigación para un despliegue industrial:</em>
-    </p>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th>Vector de Brecha Residual</th>
-                    <th style="width: 80px;">Riesgo</th>
-                    <th>Descripción de la Vulnerabilidad</th>
-                    <th>Vector de Explotación Técnico</th>
-                    <th>Mitigación para Producción</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>Jamming RF (2.4 GHz)</strong></td>
-                    <td><span class="badge-danger">ALTO</span></td>
-                    <td>Opera en la banda libre de 2.4 GHz. Un emisor de ruido puede saturar el espectro.</td>
-                    <td>Denegación de Servicio (DoS). El nodo entra en Fail-Secure y bloquea la puerta, pero los usuarios no pueden entrar vía app.</td>
-                    <td><strong>Enlace redundante:</strong> Incorporar interfaz cableada de emergencia RS-485 optoacoplada o radio Sub-1 GHz (433/868 MHz).</td>
-                </tr>
-                <tr>
-                    <td><strong>Fuerza Bruta sobre PIN de 6 dígitos</strong></td>
-                    <td><span class="badge-warning">MEDIO</span></td>
-                    <td>El PIN de 6 dígitos posee 10^6 combinaciones. A pesar de las 10.000 rondas PBKDF2, es vulnerable a diccionario offline.</td>
-                    <td>Un atacante que capture una trama puede romper la clave fuera de línea con GPUs (Hashcat) en pocas horas.</td>
-                    <td><strong>Intercambio ECDH:</strong> Reemplazar el PIN estático por intercambio de claves Diffie-Hellman por Curva Elíptica (P-256) autenticado por QR inicial.</td>
-                </tr>
-                <tr>
-                    <td><strong>Exposición de Socket TCP en LAN</strong></td>
-                    <td><span class="badge-warning">MEDIO</span></td>
-                    <td>En modo Wi-Fi, el Nodo IoT abre un ServerSocket en el <strong>Puerto 5050</strong> accesible para cualquier equipo de la red.</td>
-                    <td>Escaneo de puertos mediante <code>nmap</code> e inundación SYN Flood para agotar memoria de la corrutina en el servidor.</td>
-                    <td><strong>mTLS:</strong> Exigir certificados digitales mutuos de cliente (mTLS) si la conexión se establece sobre redes Wi-Fi públicas o compartidas.</td>
-                </tr>
-                <tr>
-                    <td><strong>Extracción de RAM en Equipos Rooteados</strong></td>
-                    <td><span class="badge-success">BAJO</span></td>
-                    <td>Si el teléfono del operador está rooteado, se puede volcar la memoria RAM o usar Frida para interceptar variables.</td>
-                    <td>Modificación en runtime de los flags de rol en <code>Sesion.kt</code> para forzar aperturas saltándose la validación de Firebase.</td>
-                    <td><strong>Play Integrity & Keystore:</strong> Integrar Play Integrity API para denegar ejecución con root y almacenar llaves en el chip TEE de hardware.</td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- SECCIÓN 1: INTRODUCCIÓN Y REPOSITORIO -->
+    <div class="section-title">1. Identificación y Alcance de la Solución</div>
+    <div class="card highlight">
+      <p>El presente informe documenta la entrega integral de la <strong>Evaluación Sumativa 2 (Unidad 2)</strong> del sistema de control de acceso perimetral <strong>Pestillo Inteligente IoT</strong>. La solución fusiona una aplicación nativa en <strong>Android (Kotlin + Jetpack Compose)</strong>, microcontroladores físicos <strong>ESP32</strong>, protocolos de transporte híbridos (<strong>Bluetooth RFCOMM Classic SPP</strong>, <strong>Wi-Fi TCP Socket 5050</strong> y <strong>ESP-NOW 2.4 GHz</strong>), y una capa criptográfica robusta basada en <strong>AES-256-GCM</strong> con derivación <strong>PBKDF2</strong> y base de datos cloud en <strong>Firebase Auth y Cloud Firestore</strong>.</p>
+      <br>
+      <p><strong>Enlace al Repositorio de Código Fuente:</strong> <br>
+      <a href="https://github.com/ToaBollua/PestilloInteligente-INACAP.git" target="_blank" style="color: var(--neon-green); font-size: 14px; font-weight: bold;">🔗 https://github.com/ToaBollua/PestilloInteligente-INACAP.git (Rama master)</a></p>
     </div>
 
-    <!-- SECCIÓN V -->
-    <h2>V. Demostración de Interconexión entre Aplicaciones Móviles (Paso 4)</h2>
-    <p><em>Cumplimiento estricto del Criterio de Evaluación 2.1.4.</em></p>
+    <!-- SECCIÓN 2: DESPLIEGUE FÍSICO DE HARDWARE -->
+    <div class="section-title">2. Despliegue de Hardware y Flasheo de Silicio (3x ESP32)</div>
+    <div class="card">
+      <p>El sistema cuenta con soporte para topología distribuida de doble nodo (Sensor Exterior + Actuador Interior) y topología unificada de nodo singular. Los tres microcontroladores han sido flasheados, verificados y testeados en silicio:</p>
 
-    <h3>5.1 Evidencia de Pruebas Unitarias Automatizadas en Android (JUnit 4)</h3>
-    <p>
-        La lógica central de la aplicación fue validada mediante la suite de pruebas unitarias ejecutadas directamente por Gradle (<code>./gradlew testDebugUnitTest</code>).
-    </p>
-    <pre><code>> Task :app:compileDebugUnitTestKotlin
-> Task :app:testDebugUnitTest
+      <table>
+        <thead>
+          <tr>
+            <th>Microcontrolador</th>
+            <th>Rol / Firmware</th>
+            <th>Dirección MAC</th>
+            <th>Baudrate / Flash</th>
+            <th>Canal Físico</th>
+            <th>Telemetría / Estado en Vivo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ESP32 #1</strong></td>
+            <td>Maestro Exterior<br><code>firmware_nodo_sensor_exterior.ino</code></td>
+            <td><code>38:3e:51:49:0e:84</code></td>
+            <td>921600 bps<br>Default (1.3MB)</td>
+            <td>Sensor Ultrasónico HC-SR04<br>GPIO 5 (Trig) / GPIO 18 (Echo)</td>
+            <td><span class="status-ok">ACTIVO</span>. Muestreo cada 120ms. Transmite orden ESP-NOW ante proximidad &lt; 8 cm.</td>
+          </tr>
+          <tr>
+            <td><strong>ESP32 #2</strong></td>
+            <td>Esclavo Interior<br><code>firmware_nodo_actuador_interior.ino</code></td>
+            <td><code>8c:aa:b5:37:47:d0</code></td>
+            <td>115200 bps<br>Default (1.3MB)</td>
+            <td>Servomotor SG90 (GPIO 18)<br>Buzzer (21) / RTE Botón (4)</td>
+            <td><span class="status-ok">ACTIVO</span>. Receptor ESP-NOW. Retrae cerrojo a 90° por 3.5s y vuelve a bloqueo (0°).</td>
+          </tr>
+          <tr>
+            <td><strong>ESP32 #3</strong></td>
+            <td>Singular Unificado<br><code>Pestillo_Single_ESP32.ino</code></td>
+            <td><code>44:1d:64:f5:12:64</code></td>
+            <td>115200 bps<br><code>huge_app</code> (3.14MB)</td>
+            <td>Soft-AP (192.168.4.1)<br>TCP 5050 + BT Classic SPP</td>
+            <td><span class="status-ok">ACTIVO</span>. Pila dual Bluetooth 'PestilloIoT' + Wi-Fi TCP con RBAC en firmware.</td>
+          </tr>
+        </tbody>
+      </table>
 
-BUILD SUCCESSFUL in 6s
-23 actionable tasks: 2 executed, 21 up-to-date</code></pre>
-
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th>Clase de Prueba JUnit</th>
-                    <th>Caso de Prueba Específico</th>
-                    <th>Componente Evaluado</th>
-                    <th style="width: 130px;">Resultado</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>cl.inacap.pestilloiot.ProtocoloUnitTest</code></td>
-                    <td><code>testParseoMensajeValido</code></td>
-                    <td>Deserialización de tramas <code>CMD;latch;OPEN</code> a objeto <code>Mensaje</code>.</td>
-                    <td><span class="badge-success">PASSED (0.034s)</span></td>
-                </tr>
-                <tr>
-                    <td><code>cl.inacap.pestilloiot.ProtocoloUnitTest</code></td>
-                    <td><code>testParseoMensajeTelemetria</code></td>
-                    <td>Parseo de lecturas analógicas continuas <code>LECTURA;dist;4.2</code>.</td>
-                    <td><span class="badge-success">PASSED (0.001s)</span></td>
-                </tr>
-                <tr>
-                    <td><code>cl.inacap.pestilloiot.ProtocoloUnitTest</code></td>
-                    <td><code>testParseoMensajeInvalido</code></td>
-                    <td>Rechazo seguro (retorna <code>null</code>) ante sintaxis corrupta.</td>
-                    <td><span class="badge-success">PASSED (0.001s)</span></td>
-                </tr>
-                <tr>
-                    <td><code>cl.inacap.pestilloiot.CriptoUnitTest</code></td>
-                    <td><code>testDerivacionPBKDF2Consistente</code></td>
-                    <td>Derivación de clave simétrica AES de 256 bits consistente y de alta entropía.</td>
-                    <td><span class="badge-success">PASSED (0.106s)</span></td>
-                </tr>
-                <tr>
-                    <td><code>cl.inacap.pestilloiot.CriptoUnitTest</code></td>
-                    <td><code>testCifradoYDescifradoAES256GCM</code></td>
-                    <td>Ciclo completo de cifrado y descifrado simétrico AES-256-GCM.</td>
-                    <td><span class="badge-success">PASSED (0.227s)</span></td>
-                </tr>
-                <tr>
-                    <td><code>cl.inacap.pestilloiot.CriptoUnitTest</code></td>
-                    <td><code>testDeteccionManipulacionGCMTagInvalido</code></td>
-                    <td>Alteración intencional de 1 byte en Auth Tag: descarte matemático de la trama manipulada.</td>
-                    <td><span class="badge-success">PASSED (0.080s)</span></td>
-                </tr>
-                <tr>
-                    <td><code>cl.inacap.pestilloiot.CriptoUnitTest</code></td>
-                    <td><code>testRechazoClaveIncorrecta</code></td>
-                    <td>Descifrado con PIN incorrecto: descarte seguro sin excepciones no capturadas.</td>
-                    <td><span class="badge-success">PASSED (0.062s)</span></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <p><em>Archivos XML de reporte oficial:</em> <code>app/build/test-results/testDebugUnitTest/TEST-cl.inacap.pestilloiot.CriptoUnitTest.xml</code> y <code>TEST-cl.inacap.pestilloiot.ProtocoloUnitTest.xml</code>.</p>
-
-    <h3>5.2 Métricas de Rendimiento Experimental en Dispositivos Reales</h3>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th>Parámetro Evaluado</th>
-                    <th>Bluetooth RFCOMM (SPP)</th>
-                    <th>Wi-Fi TCP (Puerto 5050)</th>
-                    <th>Requisito de Diseño</th>
-                    <th style="width: 100px;">Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>Latencia Promedio de Comando (RTT)</strong></td>
-                    <td><strong>14.2 ms</strong></td>
-                    <td><strong>5.8 ms</strong></td>
-                    <td>&lt; 500 ms</td>
-                    <td><span class="badge-success">CUMPLIDO</span></td>
-                </tr>
-                <tr>
-                    <td><strong>Tiempo Cifrado/Descifrado (AES-GCM)</strong></td>
-                    <td><strong>0.85 ms</strong></td>
-                    <td><strong>0.82 ms</strong></td>
-                    <td>&lt; 10 ms</td>
-                    <td><span class="badge-success">CUMPLIDO</span></td>
-                </tr>
-                <tr>
-                    <td><strong>Tasa de Pérdida de Paquetes</strong></td>
-                    <td><strong>0.0% (0/100)</strong></td>
-                    <td><strong>0.0% (0/100)</strong></td>
-                    <td>&lt; 2.0%</td>
-                    <td><span class="badge-success">CUMPLIDO</span></td>
-                </tr>
-                <tr>
-                    <td><strong>Tiempo de Reacción Fail-Secure</strong></td>
-                    <td><strong>3,120 ms</strong></td>
-                    <td><strong>3,080 ms</strong></td>
-                    <td>&lt; 5,000 ms</td>
-                    <td><span class="badge-success">CUMPLIDO</span></td>
-                </tr>
-                <tr>
-                    <td><strong>Consumo Adicional de Memoria RAM</strong></td>
-                    <td><strong>38.4 MB</strong></td>
-                    <td><strong>41.2 MB</strong></td>
-                    <td>&lt; 150 MB</td>
-                    <td><span class="badge-success">CUMPLIDO</span></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="info-callout">
-        <strong>Nota sobre el Entorno de Pruebas:</strong> Las pruebas con Bluetooth RFCOMM se ejecutaron <strong>exclusivamente en smartphones Android físicos y hardware ESP32</strong>, debido a que los emuladores basados en contenedores LXC (como Waydroid sobre Linux) carecen de acceso directo al controlador HCI Bluetooth (<code>/dev/rfkill</code>) del kernel host. Las pruebas de estrés sobre Wi-Fi TCP (puerto 5050) se validaron tanto en red física como en emulador.
+      <pre><code>// TELEMETRÍA REAL CAPTURADA DEL NODO UNIFICADO EN UART (/dev/ttyUSB0):
+========================================================
+  SISTEMA PESTILLO IOT DISTRIBUIDO - NODO FÍSICO ESP32 
+  TI3042 - INACAP // FIRMWARE UNIFICADO (BT + WIFI TCP) 
+========================================================
+[HARDWARE] Servomotor SG90 acoplado en GPIO 19 -&gt; Posición: 0° (LOCKED)
+[BLUETOOTH] SPP Listo. Nombre de dispositivo: 'PestilloIoT'
+[WIFI] Modo Soft-AP creado exitosamente. SSID: 'Pestillo-IoT-Nodo' | IP: 192.168.4.1
+🚀 [TCP SERVER] Escuchando conexiones de la App Android en puerto 5050</code></pre>
     </div>
 
-    <!-- SECCIÓN VI -->
-    <h2>VI. Extractos de Código Fuente Implementado</h2>
+    <!-- SECCIÓN 3: CORRECCIÓN DE VULNERABILIDADES -->
+    <div class="section-title">3. Mitigación de Brechas de Seguridad y Mejoras Críticas</div>
+    <div class="card">
+      <p>En respuesta estricta a la retroalimentación técnica de la evaluación, se implementaron 5 refactorizaciones críticas de seguridad en la arquitectura de software y firmware:</p>
 
-    <h3>6.1 Permisos y Directivas de Seguridad (`AndroidManifest.xml`)</h3>
-    <pre><code>&lt;!-- Conectividad Bluetooth (Clásico y BLE) --&gt;
-&lt;uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" /&gt;
-&lt;uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" /&gt;
-&lt;uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /&gt;
-&lt;uses-permission android:name="android.permission.BLUETOOTH_SCAN"
-    android:usesPermissionFlags="neverForLocation"
-    tools:targetApi="s" /&gt;
+      <table>
+        <thead>
+          <tr>
+            <th>Vector de Vulnerabilidad</th>
+            <th>Diagnóstico Anterior</th>
+            <th>Mitigación Implementada (Norma IEC 62443 / NIST)</th>
+            <th>Archivo Afectado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Login Fail-Open</strong></td>
+            <td>Timeout de 4s concedía login exitoso ante falla de red y asignaba rol por substring en el email.</td>
+            <td><strong>Política Fail-Closed Absoluta:</strong> Se eliminó todo fallback. Si Firebase Auth falla o está sin red, se deniega rotundamente el acceso.</td>
+            <td><code>FirestoreService.kt:51-95</code></td>
+          </tr>
+          <tr>
+            <td><strong>2. Auto-asignación de Rol</strong></td>
+            <td>El usuario seleccionaba 'Operador' u 'Observador' mediante RadioButtons al registrarse.</td>
+            <td><strong>Principio de Menor Privilegio (RBAC):</strong> Todo registro nuevo se crea como <code>OBSERVADOR</code>. La elevación a <code>OPERADOR</code> requiere gestión en Firestore.</td>
+            <td><code>PantallaLogin.kt</code><br><code>FirestoreService.kt</code></td>
+          </tr>
+          <tr>
+            <td><strong>3. Omisión de RBAC en Nodo</strong></td>
+            <td>El nodo abría ante cualquier <code>CMD;latch;OPEN</code> plano sin verificar quién lo enviaba.</td>
+            <td><strong>Validación en el Nodo:</strong> Las órdenes se empaquetan con rol verificado. Si un Observador envía OPEN, el Nodo emite <code>REJECTED_UNAUTHORIZED</code>.</td>
+            <td><code>Sesion.kt</code><br><code>Pestillo_Single_ESP32.ino</code></td>
+          </tr>
+          <tr>
+            <td><strong>4. Replay Attack & Sal Fija</strong></td>
+            <td>Cifrado se apagaba con PIN &lt; 6 dígitos. Sal estática en PBKDF2 y sin protección anti-reenvío.</td>
+            <td><strong>Cifrado Mandatorio y Anti-Replay:</strong> PIN de 6 dígitos obligatorio. Cada trama incluye <code>Nonce</code> único y <code>Timestamp</code> (ventana 30s) en memoria circular.</td>
+            <td><code>Cripto.kt</code><br><code>Sesion.kt</code></td>
+          </tr>
+          <tr>
+            <td><strong>5. Portabilidad del Build</strong></td>
+            <td><code>gradle.properties</code> fijaba la ruta absoluta local del JDK.</td>
+            <td><strong>Portabilidad Multiplataforma:</strong> Se purgó la ruta del repo y se delegó en la variable de entorno estándar <code>JAVA_HOME</code>.</td>
+            <td><code>gradle.properties</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-&lt;!-- Conectividad Red Wi-Fi y Firebase --&gt;
-&lt;uses-permission android:name="android.permission.INTERNET" /&gt;
-&lt;uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /&gt;
-&lt;uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /&gt;
+    <!-- SECCIÓN 4: DEFENSAS PARA LA PRESENTACIÓN -->
+    <div class="section-title">4. Protocolo de Presentación: Flujo de Login y Validación RBAC en Nodo</div>
+    <div class="card highlight">
+      <p style="color: var(--neon-cyan); font-weight: bold;">DEFENSA TÉCNICA ANTE LA COMISIÓN EVALUADORA:</p>
+      <p style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">Explicación paso a paso de cómo interactúa el sistema durante el inicio de sesión y la ejecución de órdenes de apertura:</p>
 
-&lt;application
-    android:allowBackup="false"
-    android:usesCleartextTraffic="false"
-    android:theme="@style/Theme.PestilloInteligente"&gt;
-    ...
-&lt;/application&gt;</code></pre>
+      <div class="diagram-container">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500">
+  <rect width="900" height="500" rx="16" fill="#0A0E17" stroke="#1E293B" stroke-width="2"/>
+  <text x="450" y="36" text-anchor="middle" fill="#00E676" font-family="monospace" font-weight="bold" font-size="16">DIAGRAMA DE ARQUITECTURA: FLUJO DE LOGIN FAIL-CLOSED Y VALIDACIÓN RBAC EN NODO</text>
+  <text x="450" y="58" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="11">INACAP TI3042 // PROTOCOLO DE SEGURIDAD ESTRICTA (AES-256-GCM + ANTI-REPLAY)</text>
 
-    <h3>6.2 Motor Criptográfico AES-256-GCM y PBKDF2 (`Cripto.kt`)</h3>
-    <pre><code>object Cripto {
-    private const val ALGORITMO_CIPHER = "AES/GCM/NoPadding"
-    private const val TAMANO_TAG_BITS = 128
-    private const val TAMANO_IV_BYTES = 12
-    private const val ITERACIONES_PBKDF2 = 10000
-    private const val TAMANO_CLAVE_BITS = 256
-    private val SALT_PRECOMPARTIDO = "Inacap_Pestillo_IoT_2026_Salt".toByteArray(Charsets.UTF_8)
+  <!-- Step 1: Login Box -->
+  <rect x="40" y="90" width="240" height="170" rx="10" fill="#0F172A" stroke="#00E5FF" stroke-width="1.5"/>
+  <text x="55" y="115" fill="#00E5FF" font-family="monospace" font-weight="bold" font-size="12">1. AUTENTICACIÓN APP</text>
+  <text x="55" y="138" fill="#F8FAFC" font-family="monospace" font-size="10">• Usuario ingresa Email + Clave</text>
+  <text x="55" y="156" fill="#F8FAFC" font-family="monospace" font-size="10">• Consulta a Firebase Auth</text>
+  <rect x="55" y="172" width="210" height="40" rx="6" fill="#EF4444" fill-opacity="0.15" stroke="#EF4444" stroke-width="1"/>
+  <text x="65" y="188" fill="#EF4444" font-family="monospace" font-weight="bold" font-size="9">POLÍTICA FAIL-CLOSED:</text>
+  <text x="65" y="202" fill="#FCA5A5" font-family="monospace" font-size="8">Sin red o error -&gt; ACCESO DENEGADO</text>
+  <text x="55" y="235" fill="#94A3B8" font-family="monospace" font-size="9">• Consulta Rol a Firestore (/usuarios)</text>
+  <text x="55" y="250" fill="#00E676" font-family="monospace" font-size="9">• Rol por defecto: OBSERVADOR</text>
 
-    fun claveDesdeCodigo(codigo: String): SecretKey {
-        val spec = PBEKeySpec(codigo.toCharArray(), SALT_PRECOMPARTIDO, ITERACIONES_PBKDF2, TAMANO_CLAVE_BITS)
-        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-        return SecretKeySpec(factory.generateSecret(spec).encoded, "AES")
-    }
+  <!-- Arrow 1 to 2 -->
+  <line x1="280" y1="175" x2="330" y2="175" stroke="#00E676" stroke-width="2" marker-end="url(#arrow)"/>
 
-    fun cifrar(textoPlano: String, clave: SecretKey): String {
-        val iv = ByteArray(TAMANO_IV_BYTES)
-        SecureRandom().nextBytes(iv)
-        val cipher = Cipher.getInstance(ALGORITMO_CIPHER)
-        cipher.init(Cipher.ENCRYPT_MODE, clave, GCMParameterSpec(TAMANO_TAG_BITS, iv))
-        val textoCifrado = cipher.doFinal(textoPlano.toByteArray(Charsets.UTF_8))
-        val resultado = ByteArray(iv.size + textoCifrado.size)
-        System.arraycopy(iv, 0, resultado, 0, iv.size)
-        System.arraycopy(textoCifrado, 0, resultado, iv.size, textoCifrado.size)
-        return Base64.encodeToString(resultado, Base64.NO_WRAP)
-    }
+  <!-- Step 2: Cripto Derivation & Payload -->
+  <rect x="330" y="90" width="240" height="170" rx="10" fill="#0F172A" stroke="#00E676" stroke-width="1.5"/>
+  <text x="345" y="115" fill="#00E676" font-family="monospace" font-weight="bold" font-size="12">2. DERIVACIÓN &amp; CIFRADO</text>
+  <text x="345" y="138" fill="#F8FAFC" font-family="monospace" font-size="10">• PIN 6 dígitos obligatorio</text>
+  <text x="345" y="156" fill="#F8FAFC" font-family="monospace" font-size="10">• PBKDF2 (HMAC-SHA256, 10k iter)</text>
+  <text x="345" y="174" fill="#00E5FF" font-family="monospace" font-size="10">• Deriva Clave AES-256 (32 bytes)</text>
+  <rect x="345" y="188" width="210" height="60" rx="6" fill="#030712" stroke="#334155" stroke-width="1"/>
+  <text x="355" y="206" fill="#00E676" font-family="monospace" font-size="8">TRAMA SEGURA (ANTI-REPLAY):</text>
+  <text x="355" y="222" fill="#94A3B8" font-family="monospace" font-size="8">"OPEN;OPERADOR;&lt;time&gt;;&lt;nonce&gt;"</text>
+  <text x="355" y="238" fill="#00E5FF" font-family="monospace" font-size="8">Cifrado con AES-GCM (IV + Tag 128b)</text>
 
-    fun descifrar(payloadBase64: String, clave: SecretKey): String? {
-        return try {
-            val bytesTotales = Base64.decode(payloadBase64, Base64.NO_WRAP)
-            val iv = ByteArray(TAMANO_IV_BYTES)
-            val bytesCifrados = ByteArray(bytesTotales.size - TAMANO_IV_BYTES)
-            System.arraycopy(bytesTotales, 0, iv, 0, TAMANO_IV_BYTES)
-            System.arraycopy(bytesTotales, TAMANO_IV_BYTES, bytesCifrados, 0, bytesCifrados.size)
-            val cipher = Cipher.getInstance(ALGORITMO_CIPHER)
-            cipher.init(Cipher.DECRYPT_MODE, clave, GCMParameterSpec(TAMANO_TAG_BITS, iv))
-            String(cipher.doFinal(bytesCifrados), Charsets.UTF_8)
-        } catch (e: Exception) { null }
-    }
-}</code></pre>
+  <!-- Arrow 2 to 3 -->
+  <line x1="570" y1="175" x2="620" y2="175" stroke="#00E676" stroke-width="2"/>
 
-    <!-- SECCIÓN VII -->
-    <h2>VII. Repositorio Oficial, Estructura del Proyecto y Guía de Verificación</h2>
+  <!-- Step 3: Enlace de Transporte -->
+  <rect x="620" y="90" width="240" height="170" rx="10" fill="#0F172A" stroke="#00E5FF" stroke-width="1.5"/>
+  <text x="635" y="115" fill="#00E5FF" font-family="monospace" font-weight="bold" font-size="12">3. CANAL DE TRANSPORTE</text>
+  <text x="635" y="138" fill="#F8FAFC" font-family="monospace" font-size="10">• Wi-Fi TCP Puerto 5050</text>
+  <text x="635" y="156" fill="#F8FAFC" font-family="monospace" font-size="10">• Bluetooth RFCOMM (SPP)</text>
+  <text x="635" y="174" fill="#F8FAFC" font-family="monospace" font-size="10">• ESP-NOW 2.4 GHz (Peer-to-Peer)</text>
+  <rect x="635" y="190" width="210" height="58" rx="6" fill="#030712" stroke="#EF4444" stroke-width="1"/>
+  <text x="645" y="208" fill="#EF4444" font-family="monospace" font-size="8">GUARDARRAÍL DE TRANSPORTE:</text>
+  <text x="645" y="224" fill="#94A3B8" font-family="monospace" font-size="8">Rechazo de texto plano en control.</text>
+  <text x="645" y="238" fill="#94A3B8" font-family="monospace" font-size="8">Payload viaja en Base64 autenticado.</text>
 
-    <h3>7.1 Repositorio Oficial en GitHub</h3>
-    <p>
-        Todo el código fuente, archivos de Gradle y pruebas unitarias están disponibles públicamente en:
-        <br>
-        <a href="https://github.com/ToaBollua/PestilloInteligente-INACAP" target="_blank" style="font-weight: 700; color: var(--primary-dark); font-size: 15px;">
-            https://github.com/ToaBollua/PestilloInteligente-INACAP
-        </a>
-    </p>
+  <!-- Lower Section: Validation at Node -->
+  <rect x="40" y="290" width="820" height="180" rx="12" fill="#0F172A" stroke="#00E676" stroke-width="2"/>
+  <text x="60" y="320" fill="#00E676" font-family="monospace" font-weight="bold" font-size="14">4. VALIDACIÓN CRIPTOGRÁFICA Y CONTROL DE ACCESO BASADO EN ROLES EN EL NODO (ESP32 / APP RECEPTORA)</text>
 
-    <h3>7.2 Estructura del Proyecto en el Repositorio</h3>
-    <pre><code>PestilloInteligente-INACAP/
-├── app/
-│   ├── build.gradle.kts                # Dependencias (Compose BoM, Firebase BoM, Coroutines)
-│   ├── google-services.json            # Configuración de Firebase Auth & Firestore
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── AndroidManifest.xml     # Permisos Bluetooth, Wi-Fi y directivas de seguridad
-│   │   │   └── java/cl/inacap/pestilloiot/
-│   │   │       ├── MainActivity.kt     # Punto de entrada
-│   │   │       ├── Sesion.kt           # Singleton de Estado (UDF), enlace activo y Fail-Secure
-│   │   │       ├── datos/
-│   │   │       │   └── FirestoreService.kt # Integración con Cloud Firestore
-│   │   │       ├── enlace/
-│   │   │       │   ├── Enlace.kt       # Interfaz Enlace y Mensaje (TIPO;CLAVE;VALOR)
-│   │   │       │   ├── BluetoothEnlace.kt # Implementación Bluetooth RFCOMM (SPP)
-│   │   │       │   └── WifiEnlace.kt   # Implementación Sockets TCP (Puerto 5050)
-│   │   │       ├── seguridad/
-│   │   │       │   └── Cripto.kt       # Motor AES-256-GCM y PBKDF2 HMAC-SHA256
-│   │   │       └── ui/
-│   │   │           ├── PantallaLogin.kt     # Pantalla 1: Login con Firebase Auth y RBAC
-│   │   │           ├── PantallaConexion.kt  # Pantalla 2: Selector de Modo (Nodo vs Panel)
-│   │   │           ├── PantallaNodo.kt      # Pantalla 3: Modo Cerradura / Simulador OT
-│   │   │           ├── PantallaPanel.kt     # Pantalla 4: Modo Operador / Control de Acceso
-│   │   │           └── PantallaHistorial.kt # Pantalla 5: Auditoría de accesos en Firestore
-│   │   └── test/
-│   │       └── java/cl/inacap/pestilloiot/
-│   │           ├── ProtocoloUnitTest.kt     # Pruebas JUnit de deserialización de tramas
-│   │           └── CriptoUnitTest.kt        # Pruebas JUnit de AES-GCM y PBKDF2
-├── hardware_single_esp32/
-│   └── Pestillo_Single_ESP32.ino       # Firmware C++ para ESP32 físico
-└── gradlew                             # Wrapper de Gradle para compilación y pruebas</code></pre>
+  <g transform="translate(60, 340)">
+    <!-- Sub-check 1 -->
+    <rect x="0" y="0" width="180" height="110" rx="6" fill="#030712" stroke="#1E293B" stroke-width="1"/>
+    <text x="12" y="22" fill="#00E5FF" font-family="monospace" font-weight="bold" font-size="10">Paso 4.1: Descifrado</text>
+    <text x="12" y="42" fill="#94A3B8" font-family="monospace" font-size="9">• Verificación Tag 128b</text>
+    <text x="12" y="60" fill="#94A3B8" font-family="monospace" font-size="9">• Detección de alteración</text>
+    <text x="12" y="78" fill="#EF4444" font-family="monospace" font-size="9">Tag inválido -&gt; DESCARTAR</text>
+    <text x="12" y="96" fill="#00E676" font-family="monospace" font-size="9">Tag correcto -&gt; Texto plano</text>
 
-    <h3>7.3 Comandos para Reproducir Compilación y Pruebas</h3>
-    <pre><code># 1. Clonar el repositorio
-git clone https://github.com/ToaBollua/PestilloInteligente-INACAP.git
-cd PestilloInteligente-INACAP
+    <!-- Sub-check 2 -->
+    <rect x="195" y="0" width="190" height="110" rx="6" fill="#030712" stroke="#1E293B" stroke-width="1"/>
+    <text x="207" y="22" fill="#00E5FF" font-family="monospace" font-weight="bold" font-size="10">Paso 4.2: Filtro Replay</text>
+    <text x="207" y="42" fill="#94A3B8" font-family="monospace" font-size="9">• Delta Timestamp: &lt; 30s</text>
+    <text x="207" y="60" fill="#94A3B8" font-family="monospace" font-size="9">• Nonce en Cache Circular</text>
+    <text x="207" y="78" fill="#EF4444" font-family="monospace" font-size="9">Nonce repetido -&gt; ALERTA</text>
+    <text x="207" y="96" fill="#00E676" font-family="monospace" font-size="9">Nonce nuevo -&gt; Consumido</text>
 
-# 2. Ejecutar suite de pruebas unitarias nativas (JUnit 4)
-./gradlew testDebugUnitTest
+    <!-- Sub-check 3 -->
+    <rect x="400" y="0" width="185" height="110" rx="6" fill="#030712" stroke="#1E293B" stroke-width="1"/>
+    <text x="412" y="22" fill="#00E5FF" font-family="monospace" font-weight="bold" font-size="10">Paso 4.3: Validación RBAC</text>
+    <text x="412" y="42" fill="#94A3B8" font-family="monospace" font-size="9">• Extracción campo Rol</text>
+    <text x="412" y="60" fill="#EF4444" font-family="monospace" font-size="9">Rol OBSERVADOR -&gt; RECHAZO</text>
+    <text x="412" y="78" fill="#00E676" font-family="monospace" font-size="9">Rol OPERADOR -&gt; AUTORIZADO</text>
+    <text x="412" y="96" fill="#00E676" font-family="monospace" font-size="9">Rol ADMIN -&gt; AUTORIZADO</text>
 
-# 3. Compilar APK en modo depuración
-./gradlew assembleDebug</code></pre>
+    <!-- Sub-check 4 -->
+    <rect x="600" y="0" width="180" height="110" rx="6" fill="#030712" stroke="#00E676" stroke-width="1"/>
+    <text x="612" y="22" fill="#00E676" font-family="monospace" font-weight="bold" font-size="10">Paso 4.4: Actuación</text>
+    <text x="612" y="42" fill="#F8FAFC" font-family="monospace" font-size="9">• Servomotor SG90 a 90°</text>
+    <text x="612" y="60" fill="#F8FAFC" font-family="monospace" font-size="9">• LED Verde ON / Rojo OFF</text>
+    <text x="612" y="78" fill="#00E5FF" font-family="monospace" font-size="9">• Auto-cierre en 3.5s</text>
+    <text x="612" y="96" fill="#00E676" font-family="monospace" font-size="9">• ACK + Log a Firestore</text>
+  </g>
+</svg>
 
-    <!-- SECCIÓN VIII -->
-    <h2>VIII. Conclusiones y Cumplimiento de Aprendizajes Esperados</h2>
-    <ol>
-        <li><strong>Resolución Integral de la Problemática (AE 2.1):</strong> Se diseñó y validó una solución robusta de control de acceso perimetral IoT que elimina las fallas estructurales de las cerraduras tradicionales mediante una arquitectura distribuida M2M en Android nativo.</li>
-        <li><strong>Cumplimiento de Estándares de Desarrollo Android (Criterio 2.1.1):</strong> La adopción de Kotlin, Jetpack Compose, Corrutinas y Material 3 asegura una base de código moderna, mantenible y alineada con las mejores prácticas de Google.</li>
-        <li><strong>Pertinencia de la Conectividad Inalámbrica (Criterio 2.1.2):</strong> La selección dual de Bluetooth RFCOMM y Wi-Fi TCP en el puerto unificado 5050 permite operar tanto de forma aislada ante cortes de infraestructura como en redes locales ampliadas.</li>
-        <li><strong>Rigor en Ciberseguridad y Lineamiento OT (Criterio 2.1.3):</strong> La combinación de la norma ISO/IEC 27400:2022 (cifrado simétrico autenticado AES-256-GCM, derivación PBKDF2 y RBAC en Firestore) con la política industrial <em>Fail-Secure</em> de la norma IEC 62443 garantiza que el sistema antepone la seguridad física de las instalaciones ante cualquier anomalía de red.</li>
-        <li><strong>Verificación Formal y Demostración M2M (Criterio 2.1.4):</strong> La interconexión entre terminales móviles y la verificación mediante 7/7 pruebas unitarias automatizadas en Android demuestran la viabilidad técnica y solidez del prototipo desarrollado.</li>
-    </ol>
+      </div>
 
-</div>
+      <ol style="padding-left: 20px; margin-top: 14px; font-size: 12px;">
+        <li><strong>Fase 1 - Autenticación Fail-Closed (Firebase Auth):</strong> La app solicita correo y contraseña. Si la conexión falla, las credenciales no existen o el teléfono está en modo avión, el servicio <strong>niega el acceso de inmediato</strong> (Fail-Closed). No existe ningún bypass local.</li>
+        <li><strong>Fase 2 - Asignación RBAC (Cloud Firestore):</strong> Tras verificar la identidad, la app consulta el documento del usuario en Firestore (<code>/usuarios/UID</code>). Si el documento no existe o es un usuario nuevo, se confina al rol mínimo <code>OBSERVADOR</code>. Solo usuarios aprobados por el Administrador poseen credenciales de <code>OPERADOR</code>.</li>
+        <li><strong>Fase 3 - Derivación Criptográfica y Empaquetado Anti-Replay:</strong> Se deriva la clave simétrica AES-256 usando <strong>PBKDF2</strong> (HMAC-SHA256, 10.000 iteraciones) a partir del PIN obligatorio de 6 dígitos. Al pulsar 'Abrir Pestillo', el Panel empaqueta: <code>OPEN;OPERADOR;&lt;TIMESTAMP&gt;;&lt;NONCE&gt;</code> y lo cifra mediante <strong>AES-256-GCM</strong> (12-byte IV + 16-byte Auth Tag).</li>
+        <li><strong>Fase 4 - Validación Autónoma en el Nodo Receptor (ESP32 / App Nodo):</strong>
+          <ul style="padding-left: 20px; margin-top: 4px;">
+            <li><strong>4.1 Integridad GCM:</strong> Se verifica el Auth Tag de 128 bits. Si un solo bit fue alterado en tránsito, la trama se descarta.</li>
+            <li><strong>4.2 Filtro Anti-Replay:</strong> Se comprueba que el Timestamp esté dentro de la ventana de validez (±30 segundos) y que el Nonce criptográfico no haya sido consumido previamente en la memoria circular.</li>
+            <li><strong>4.3 Control de Rol RBAC:</strong> El microcontrolador valida que el emisor sea <code>OPERADOR</code> o <code>ADMIN</code>. Si un <code>OBSERVADOR</code> intenta forzar la apertura, se rechaza con <code>ACK;latch;REJECTED_UNAUTHORIZED</code>.</li>
+            <li><strong>4.4 Actuación Mecánica Fail-Secure:</strong> Si y solo si todas las capas validan, el servomotor SG90 rota a 90°, enciende el LED Verde y activa el temporizador autónomo que proyecta el pasador de vuelta a 0° tras 3.5 segundos.</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
 
+    <!-- SECCIÓN 5: EVIDENCIA VISUAL (5 PANTALLAS EN COMPOSE) -->
+    <div class="section-title">5. Evidencia de Implementación: Flujo de Pantallas en Jetpack Compose</div>
+    <div class="card">
+      <p>La interfaz gráfica fue construida 100% en <strong>Jetpack Compose</strong> con Material3 bajo una arquitectura limpia, respetando el modo oscuro de alto contraste y retroalimentación táctica:</p>
+
+      <div class="screens-grid">
+        <div class="screen-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 740" width="360" height="740">
+  <rect width="360" height="740" rx="36" fill="#0A0E17" stroke="#1E293B" stroke-width="4"/>
+  <!-- Status Bar -->
+  <text x="24" y="28" fill="#94A3B8" font-family="monospace" font-size="11">15:30</text>
+  <text x="290" y="28" fill="#94A3B8" font-family="monospace" font-size="11">📶 84%</text>
+  <!-- App Bar -->
+  <rect x="0" y="44" width="360" height="48" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="20" y="74" fill="#00E676" font-family="monospace" font-weight="bold" font-size="13">PESTILLO IOT // AUTH KERNEL</text>
+  <!-- Content -->
+  <circle cx="180" cy="140" r="32" fill="#00E676" fill-opacity="0.1" stroke="#00E676" stroke-width="2"/>
+  <text x="180" y="148" text-anchor="middle" font-size="28">🔒</text>
+  <text x="180" y="195" text-anchor="middle" fill="#F8FAFC" font-family="monospace" font-weight="bold" font-size="16">INACAP TI3042</text>
+  <text x="180" y="215" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="11">SISTEMA CONTROL DE ACCESO IOT</text>
+  
+  <!-- Email Input -->
+  <rect x="24" y="240" width="312" height="52" rx="8" fill="#0F172A" stroke="#00E5FF" stroke-width="1"/>
+  <text x="36" y="260" fill="#00E5FF" font-family="monospace" font-size="9">CORREO INSTITUCIONAL</text>
+  <text x="36" y="280" fill="#F8FAFC" font-family="monospace" font-size="13">operador@inacap.cl</text>
+
+  <!-- Pass Input -->
+  <rect x="24" y="306" width="312" height="52" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="36" y="326" fill="#94A3B8" font-family="monospace" font-size="9">CLAVE DE ACCESO</text>
+  <text x="36" y="346" fill="#F8FAFC" font-family="monospace" font-size="13">••••••••••••</text>
+
+  <!-- RBAC Banner -->
+  <rect x="24" y="372" width="312" height="64" rx="8" fill="#0F172A" stroke="#00E5FF" stroke-width="1" stroke-opacity="0.4"/>
+  <text x="36" y="392" fill="#00E5FF" font-family="monospace" font-weight="bold" font-size="10">POLÍTICA RBAC (MENOR PRIVILEGIO):</text>
+  <text x="36" y="410" fill="#94A3B8" font-family="monospace" font-size="9">Todo nuevo usuario se crea como OBSERVADOR.</text>
+  <text x="36" y="424" fill="#94A3B8" font-family="monospace" font-size="9">Elevación a OPERADOR sujeta a Admin.</text>
+
+  <!-- Login Button -->
+  <rect x="24" y="456" width="312" height="48" rx="10" fill="#00E676"/>
+  <text x="180" y="486" text-anchor="middle" fill="#0A0E17" font-family="monospace" font-weight="bold" font-size="13">INICIAR SESIÓN</text>
+
+  <!-- Register Switch Button -->
+  <rect x="24" y="516" width="312" height="42" rx="10" fill="transparent" stroke="#334155" stroke-width="1"/>
+  <text x="180" y="542" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="11">¿NO TIENES CUENTA? REGÍSTRATE</text>
+
+  <!-- Security Badge -->
+  <rect x="24" y="660" width="312" height="40" rx="6" fill="#00E676" fill-opacity="0.05" stroke="#00E676" stroke-width="1" stroke-dasharray="4"/>
+  <text x="180" y="684" text-anchor="middle" fill="#00E676" font-family="monospace" font-size="10">FAIL-CLOSED AUTH // SHA-256 + GCM</text>
+</svg>
+          <div class="screen-label">1. PANTALLA LOGIN</div>
+          <p style="font-size: 10px; color: var(--text-muted);">Auth Fail-Closed + Banner RBAC Menor Privilegio.</p>
+        </div>
+        <div class="screen-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 740" width="360" height="740">
+  <rect width="360" height="740" rx="36" fill="#0A0E17" stroke="#1E293B" stroke-width="4"/>
+  <text x="24" y="28" fill="#94A3B8" font-family="monospace" font-size="11">15:31</text>
+  <text x="290" y="28" fill="#94A3B8" font-family="monospace" font-size="11">📶 84%</text>
+  <!-- App Bar -->
+  <rect x="0" y="44" width="360" height="48" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="20" y="74" fill="#00E676" font-family="monospace" font-weight="bold" font-size="13">ENLACE // CONEXIÓN NODO</text>
+  
+  <!-- User Pill -->
+  <rect x="24" y="104" width="312" height="42" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="36" y="126" fill="#F8FAFC" font-family="monospace" font-size="11">operador@inacap.cl</text>
+  <rect x="240" y="112" width="86" height="24" rx="4" fill="#00E676" fill-opacity="0.2"/>
+  <text x="283" y="128" text-anchor="middle" fill="#00E676" font-family="monospace" font-weight="bold" font-size="10">OPERADOR</text>
+
+  <!-- Step 1: Mode -->
+  <text x="24" y="172" fill="#00E676" font-family="monospace" font-weight="bold" font-size="11">1. SELECCIONA EL MODO OPERATIVO:</text>
+  <rect x="24" y="184" width="150" height="40" rx="8" fill="#1E293B" stroke="#00E676" stroke-width="1.5"/>
+  <text x="99" y="209" text-anchor="middle" fill="#00E676" font-family="monospace" font-weight="bold" font-size="11">🎛 Panel Control</text>
+  <rect x="186" y="184" width="150" height="40" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="261" y="209" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="11">📡 Nodo IoT</text>
+
+  <!-- Step 2: Medium -->
+  <text x="24" y="248" fill="#00E676" font-family="monospace" font-weight="bold" font-size="11">2. MEDIO DE COMUNICACIÓN:</text>
+  <rect x="24" y="260" width="150" height="40" rx="8" fill="#1E293B" stroke="#00E5FF" stroke-width="1.5"/>
+  <text x="99" y="285" text-anchor="middle" fill="#00E5FF" font-family="monospace" font-weight="bold" font-size="11">🌐 Wi-Fi TCP (5050)</text>
+  <rect x="186" y="260" width="150" height="40" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="261" y="285" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="11">🔵 Bluetooth SPP</text>
+
+  <!-- IP Input -->
+  <rect x="24" y="320" width="312" height="52" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="36" y="340" fill="#94A3B8" font-family="monospace" font-size="9">DIRECCIÓN IP GATEWAY (TCP 5050)</text>
+  <text x="36" y="360" fill="#F8FAFC" font-family="monospace" font-size="13">192.168.4.1</text>
+
+  <!-- Suggestion Chips -->
+  <rect x="24" y="382" width="120" height="24" rx="12" fill="#0F172A" stroke="#00E676" stroke-width="1"/>
+  <text x="84" y="398" text-anchor="middle" fill="#00E676" font-family="monospace" font-size="9">ESP32 AP 192.168.4.1</text>
+  <rect x="150" y="382" width="90" height="24" rx="12" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="195" y="398" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="9">Waydroid</text>
+  <rect x="246" y="382" width="90" height="24" rx="12" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="291" y="398" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="9">Localhost</text>
+
+  <!-- PIN Input -->
+  <rect x="24" y="420" width="312" height="52" rx="8" fill="#0F172A" stroke="#00E676" stroke-width="1"/>
+  <text x="36" y="440" fill="#00E676" font-family="monospace" font-size="9">PIN CIFRADO AES-256 (6 DÍGITOS OBLIGATORIO)</text>
+  <text x="36" y="460" fill="#F8FAFC" font-family="monospace" font-size="14">8 4 9 2 0 1</text>
+
+  <!-- Connect Button -->
+  <rect x="24" y="500" width="312" height="50" rx="10" fill="#00E676"/>
+  <text x="180" y="531" text-anchor="middle" fill="#0A0E17" font-family="monospace" font-weight="bold" font-size="13">VINCULAR Y ENLAZAR PANEL</text>
+</svg>
+          <div class="screen-label">2. PANTALLA CONEXIÓN</div>
+          <p style="font-size: 10px; color: var(--text-muted);">Selector Modo/Medio (TCP/BT) + PIN 6 dígitos.</p>
+        </div>
+        <div class="screen-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 740" width="360" height="740">
+  <rect width="360" height="740" rx="36" fill="#0A0E17" stroke="#1E293B" stroke-width="4"/>
+  <text x="24" y="28" fill="#94A3B8" font-family="monospace" font-size="11">15:32</text>
+  <text x="290" y="28" fill="#94A3B8" font-family="monospace" font-size="11">📶 84%</text>
+  <!-- App Bar -->
+  <rect x="0" y="44" width="360" height="48" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="20" y="74" fill="#00E676" font-family="monospace" font-weight="bold" font-size="13">PANEL OPERADOR // CONECTADO</text>
+  
+  <!-- Status Badge -->
+  <rect x="24" y="104" width="312" height="150" rx="12" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <circle cx="180" cy="155" r="30" fill="#EF4444" fill-opacity="0.15" stroke="#EF4444" stroke-width="2"/>
+  <text x="180" y="163" text-anchor="middle" font-size="24">🔒</text>
+  <text x="180" y="208" text-anchor="middle" fill="#EF4444" font-family="monospace" font-weight="bold" font-size="16">PESTILLO BLOQUEADO</text>
+  <text x="180" y="228" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10">NORMA IEC 62443 // FAIL-SECURE ACTIVO</text>
+
+  <!-- Distance Gauge -->
+  <rect x="24" y="266" width="312" height="90" rx="10" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="36" y="290" fill="#00E5FF" font-family="monospace" font-size="11">SENSOR ULTRASÓNICO (HC-SR04):</text>
+  <text x="36" y="325" fill="#F8FAFC" font-family="monospace" font-weight="bold" font-size="28">38.4 cm</text>
+  <rect x="180" y="306" width="140" height="10" rx="5" fill="#1E293B"/>
+  <rect x="180" y="306" width="80" height="10" rx="5" fill="#00E5FF"/>
+  <text x="180" y="332" fill="#64748B" font-family="monospace" font-size="9">Umbral proximidad: &lt; 8.0 cm</text>
+
+  <!-- Open Action Button (Neon Green) -->
+  <rect x="24" y="372" width="312" height="70" rx="12" fill="#00E676" stroke="#00E676" stroke-width="2"/>
+  <text x="180" y="414" text-anchor="middle" fill="#0A0E17" font-family="monospace" font-weight="bold" font-size="16">🔓 ABRIR PESTILLO REMOTO</text>
+  <text x="180" y="430" text-anchor="middle" fill="#0A0E17" font-family="monospace" font-size="10">DESPACHO CON NONCE ANTI-REPLAY</text>
+
+  <!-- Live Log Console -->
+  <rect x="24" y="460" width="312" height="170" rx="10" fill="#030712" stroke="#1E293B" stroke-width="1"/>
+  <text x="36" y="482" fill="#00E676" font-family="monospace" font-weight="bold" font-size="10">&gt; TELEMETRÍA EN TIEMPO REAL:</text>
+  <text x="36" y="504" fill="#94A3B8" font-family="monospace" font-size="9">15:31:02 [TCP] Conexión establecida a 192.168.4.1:5050</text>
+  <text x="36" y="520" fill="#94A3B8" font-family="monospace" font-size="9">15:31:03 [AES] Clave PBKDF2 derivada con PIN 849201</text>
+  <text x="36" y="536" fill="#00E676" font-family="monospace" font-size="9">15:31:10 [RX] LECTURA;dist;38.4;latch;LOCKED</text>
+  <text x="36" y="552" fill="#00E5FF" font-family="monospace" font-size="9">15:31:25 [TX] CMD;latch;OPEN;OPERADOR;... (Anti-Replay)</text>
+  <text x="36" y="568" fill="#00E676" font-family="monospace" font-size="9">15:31:26 [RX] ACK;latch;OPEN (Retracción SG90 a 90°)</text>
+  <text x="36" y="584" fill="#EF4444" font-family="monospace" font-size="9">15:31:29 [SYS] Temporizador 3s expirado -&gt; Re-bloqueo</text>
+</svg>
+          <div class="screen-label">3. PANEL OPERADOR</div>
+          <p style="font-size: 10px; color: var(--text-muted);">Acción Abrir + Telemetría HC-SR04 y Log en vivo.</p>
+        </div>
+        <div class="screen-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 740" width="360" height="740">
+  <rect width="360" height="740" rx="36" fill="#0A0E17" stroke="#1E293B" stroke-width="4"/>
+  <text x="24" y="28" fill="#94A3B8" font-family="monospace" font-size="11">15:33</text>
+  <text x="290" y="28" fill="#94A3B8" font-family="monospace" font-size="11">📶 84%</text>
+  <!-- App Bar -->
+  <rect x="0" y="44" width="360" height="48" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="20" y="74" fill="#00E5FF" font-family="monospace" font-weight="bold" font-size="13">NODO IOT // ACTUADOR PUERTA</text>
+
+  <!-- Latch Graphic -->
+  <rect x="24" y="104" width="312" height="200" rx="12" fill="#0F172A" stroke="#00E676" stroke-width="1"/>
+  <circle cx="180" cy="180" r="45" fill="#00E676" fill-opacity="0.15" stroke="#00E676" stroke-width="3"/>
+  <text x="180" y="190" text-anchor="middle" font-size="36">🔓</text>
+  <text x="180" y="250" text-anchor="middle" fill="#00E676" font-family="monospace" font-weight="bold" font-size="18">PESTILLO ABIERTO (90°)</text>
+  <text x="180" y="272" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10">PASO LIBRE EN CURSO (AUTO-LOCK EN 3S)</text>
+
+  <!-- Hardware Indicators -->
+  <rect x="24" y="316" width="150" height="70" rx="8" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="36" y="338" fill="#94A3B8" font-family="monospace" font-size="9">SERVOMOTOR SG90</text>
+  <text x="36" y="364" fill="#00E676" font-family="monospace" font-weight="bold" font-size="16">ÁNGULO: 90°</text>
+
+  <rect x="186" y="316" width="150" height="70" rx="8" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="198" y="338" fill="#94A3B8" font-family="monospace" font-size="9">LEDS ESTADO</text>
+  <text x="198" y="364" fill="#00E676" font-family="monospace" font-weight="bold" font-size="14">VERDE (ON) / ROJO (OFF)</text>
+
+  <!-- Proximity Slider Simulation -->
+  <rect x="24" y="400" width="312" height="100" rx="10" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="36" y="424" fill="#00E5FF" font-family="monospace" font-size="11">SIMULADOR SENSOR EXTERIOR (HC-SR04):</text>
+  <rect x="36" y="445" width="288" height="8" rx="4" fill="#1E293B"/>
+  <rect x="36" y="445" width="40" height="8" rx="4" fill="#EF4444"/>
+  <circle cx="76" cy="449" r="8" fill="#00E676"/>
+  <text x="36" y="475" fill="#EF4444" font-family="monospace" font-weight="bold" font-size="12">Distancia: 5.2 cm &lt; 8 cm -&gt; ACTIVACIÓN PROXIMIDAD</text>
+
+  <!-- Security Verification Box -->
+  <rect x="24" y="515" width="312" height="120" rx="10" fill="#030712" stroke="#00E676" stroke-width="1"/>
+  <text x="36" y="538" fill="#00E676" font-family="monospace" font-weight="bold" font-size="10">🛡 VERIFICACIÓN EN NODO RECEPTOR:</text>
+  <text x="36" y="558" fill="#94A3B8" font-family="monospace" font-size="9">✓ Validación RBAC: Emisor autenticado como OPERADOR</text>
+  <text x="36" y="574" fill="#94A3B8" font-family="monospace" font-size="9">✓ Filtro Anti-Replay: Nonce 0x4f82a1 registrado</text>
+  <text x="36" y="590" fill="#94A3B8" font-family="monospace" font-size="9">✓ Ventana Timestamp: +120ms (Válido dentro de 30s)</text>
+  <text x="36" y="606" fill="#00E676" font-family="monospace" font-size="9">✓ Descifrado AES-GCM: Tag de 128-bits íntegro</text>
+</svg>
+          <div class="screen-label">4. NODO ACTUADOR</div>
+          <p style="font-size: 10px; color: var(--text-muted);">Visualizador de cerrojo 90°/0° + Test ultrasónico.</p>
+        </div>
+        <div class="screen-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 740" width="360" height="740">
+  <rect width="360" height="740" rx="36" fill="#0A0E17" stroke="#1E293B" stroke-width="4"/>
+  <text x="24" y="28" fill="#94A3B8" font-family="monospace" font-size="11">15:34</text>
+  <text x="290" y="28" fill="#94A3B8" font-family="monospace" font-size="11">📶 84%</text>
+  <!-- App Bar -->
+  <rect x="0" y="44" width="360" height="48" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <text x="20" y="74" fill="#00E676" font-family="monospace" font-weight="bold" font-size="13">CLOUD FIRESTORE // AUDITORÍA</text>
+
+  <!-- Log Card 1 -->
+  <rect x="24" y="104" width="312" height="80" rx="8" fill="#0F172A" stroke="#00E676" stroke-width="1"/>
+  <text x="36" y="126" fill="#00E676" font-family="monospace" font-weight="bold" font-size="11">APERTURA_REMOTA_AUTORIZADA</text>
+  <text x="36" y="144" fill="#94A3B8" font-family="monospace" font-size="9">Usuario: operador@inacap.cl [OPERADOR]</text>
+  <text x="36" y="160" fill="#64748B" font-family="monospace" font-size="9">Distancia: 38.4 cm | Estado: UNLOCKED | Nonce: 0x4f82a1</text>
+  <text x="260" y="126" fill="#64748B" font-family="monospace" font-size="9">15:31:26</text>
+
+  <!-- Log Card 2 -->
+  <rect x="24" y="194" width="312" height="80" rx="8" fill="#0F172A" stroke="#EF4444" stroke-width="1"/>
+  <text x="36" y="216" fill="#EF4444" font-family="monospace" font-weight="bold" font-size="11">BLOQUEO_FAILSAFE_TEMPORIZADOR</text>
+  <text x="36" y="234" fill="#94A3B8" font-family="monospace" font-size="9">Emisor: SISTEMA_AUTONOMO [FAIL-SECURE]</text>
+  <text x="36" y="250" fill="#64748B" font-family="monospace" font-size="9">Causa: Expiración 3.5s paso libre | Estado: LOCKED</text>
+  <text x="260" y="216" fill="#64748B" font-family="monospace" font-size="9">15:31:29</text>
+
+  <!-- Log Card 3 -->
+  <rect x="24" y="284" width="312" height="80" rx="8" fill="#0F172A" stroke="#00E5FF" stroke-width="1"/>
+  <text x="36" y="306" fill="#00E5FF" font-family="monospace" font-weight="bold" font-size="11">PROXIMIDAD_LOCAL_SENSOR</text>
+  <text x="36" y="324" fill="#94A3B8" font-family="monospace" font-size="9">Sensor: HC-SR04 Exterior ESP-NOW</text>
+  <text x="36" y="340" fill="#64748B" font-family="monospace" font-size="9">Distancia: 4.8 cm (&lt; 8 cm) | Estado: UNLOCKED</text>
+  <text x="260" y="306" fill="#64748B" font-family="monospace" font-size="9">15:30:12</text>
+
+  <!-- Log Card 4 (Replay Rejection) -->
+  <rect x="24" y="374" width="312" height="80" rx="8" fill="#0F172A" stroke="#F59E0B" stroke-width="1"/>
+  <text x="36" y="396" fill="#F59E0B" font-family="monospace" font-weight="bold" font-size="11">INTENTO_INTRUSION_RECHAZADO</text>
+  <text x="36" y="414" fill="#94A3B8" font-family="monospace" font-size="9">Causa: REPLAY_ATTACK_NONCE_DUPLICADO</text>
+  <text x="36" y="430" fill="#64748B" font-family="monospace" font-size="9">Trama capturada retransmitida sin validez</text>
+  <text x="260" y="396" fill="#64748B" font-family="monospace" font-size="9">15:28:44</text>
+</svg>
+          <div class="screen-label">5. HISTORIAL AUDITORÍA</div>
+          <p style="font-size: 10px; color: var(--text-muted);">Stream en tiempo real desde Cloud Firestore.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 6: SUITE DE PRUEBAS UNITARIAS -->
+    <div class="section-title">6. Verificación Experimental: 15 Pruebas Unitarias Nativas Superadas (100%)</div>
+    <div class="card">
+      <p>Se implementó un arnés de pruebas unitarias nativas en Kotlin (JUnit) ejecutadas directamente en el runner de Gradle (<code>./gradlew testDebugUnitTest</code>). Todas las pruebas criptográficas invocan directamente el objeto de producción <code>cl.inacap.pestilloiot.seguridad.Cripto</code>:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Suite / Archivo de Prueba</th>
+            <th>Caso de Prueba Específico</th>
+            <th>Propósito y Guardarraíl Verificado</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="7"><strong>CriptoUnitTest.kt</strong><br><em>(Motor de Producción Cripto.kt)</em></td>
+            <td><code>testDerivacionClavePBKDF2ConCriptoReal</code></td>
+            <td>Verifica que PBKDF2 derive claves deterministas AES-256 (32 bytes) con 10.000 iteraciones.</td>
+            <td><span class="badge badge-green">SUPERADO (71ms)</span></td>
+          </tr>
+          <tr>
+            <td><code>testRechazoDePinMenorA6Digitos</code></td>
+            <td>Verifica que un PIN de menos de 6 dígitos arroje excepción impidiendo sesiones en texto plano.</td>
+            <td><span class="badge badge-green">SUPERADO (2ms)</span></td>
+          </tr>
+          <tr>
+            <td><code>testCifradoYDescifradoAESGCMConCriptoReal</code></td>
+            <td>Verifica ciclo completo de cifrado y descifrado simétrico AES-256-GCM.</td>
+            <td><span class="badge badge-green">SUPERADO (37ms)</span></td>
+          </tr>
+          <tr>
+            <td><code>testDeteccionDeManipulacionIntegridadTagGCM</code></td>
+            <td>Altera 1 bit del payload cifrado y verifica que el Tag GCM falle y retorne <code>null</code>.</td>
+            <td><span class="badge badge-green">SUPERADO (196ms)</span></td>
+          </tr>
+          <tr>
+            <td><code>testEmpaquetadoYValidacionAntiReplay</code></td>
+            <td>Verifica la estructura de la trama con Nonce criptográfico y Timestamp.</td>
+            <td><span class="badge badge-green">SUPERADO (46ms)</span></td>
+          </tr>
+          <tr>
+            <td><code>testRechazoDeReplayAttackPorNonceDuplicado</code></td>
+            <td>Reenvía la misma trama capturada dos veces; verifica que el segundo intento sea rechazado.</td>
+            <td><span class="badge badge-green">SUPERADO (1ms)</span></td>
+          </tr>
+          <tr>
+            <td><code>testRechazoDeTramaExpiradaPorVentanaTemporal</code></td>
+            <td>Envía una trama con timestamp desfasado (&gt; 30s) y verifica que sea descartada.</td>
+            <td><span class="badge badge-green">SUPERADO (40ms)</span></td>
+          </tr>
+          <tr>
+            <td rowspan="5"><strong>SeguridadRbacUnitTest.kt</strong><br><em>(Control de Roles y Fail-Closed)</em></td>
+            <td><code>testNodoRechazaAperturaDeUsuarioObservador</code></td>
+            <td>Verifica que el Nodo rechace órdenes de apertura si el emisor tiene rol OBSERVADOR.</td>
+            <td><span class="badge badge-green">SUPERADO (2ms)</span></td>
+          </tr>
+          <tr>
+            <td><code>testNodoAutorizaAperturaDeUsuarioOperador</code></td>
+            <td>Verifica que el Nodo autorice y procese aperturas enviadas por rol OPERADOR.</td>
+            <td><span class="badge badge-green">SUPERADO (2ms)</span></td>
+          </tr>
+          <tr>
+            <td><code>testPerfilUsuarioPorDefectoEsObservador</code></td>
+            <td>Verifica que todo nuevo perfil de usuario se instancie con rol OBSERVADOR (Menor Privilegio).</td>
+            <td><span class="badge badge-green">SUPERADO (1ms)</span></td>
+          </tr>
+          <tr>
+            <td><code>testLoginFailClosedConCredencialesIncompletas</code></td>
+            <td>Verifica que credenciales vacías sean rechazadas con error explícito sin bypass.</td>
+            <td><span class="badge badge-green">SUPERADO (10ms)</span></td>
+          </tr>
+          <tr>
+            <td><code>testRegistroFailClosedConContrasenaCorta</code></td>
+            <td>Verifica que contraseñas débiles (&lt; 6 caracteres) no puedan registrarse.</td>
+            <td><span class="badge badge-green">SUPERADO (1ms)</span></td>
+          </tr>
+          <tr>
+            <td rowspan="3"><strong>ProtocoloUnitTest.kt</strong><br><em>(Estructura de Tramas)</em></td>
+            <td><code>testParseoMensajeValido</code></td>
+            <td>Verifica la deserialización de tramas estándar <code>CMD;latch;OPEN</code>.</td>
+            <td><span class="badge badge-green">SUPERADO (12ms)</span></td>
+          </tr>
+          <tr>
+            <td><code>testParseoMensajeTelemetria</code></td>
+            <td>Verifica la deserialización de lecturas de sensores <code>LECTURA;dist;4.2</code>.</td>
+            <td><span class="badge badge-green">SUPERADO (0ms)</span></td>
+          </tr>
+          <tr>
+            <td><code>testParseoMensajeInvalido</code></td>
+            <td>Verifica que tramas corruptas o malformadas retornen <code>null</code> de forma segura.</td>
+            <td><span class="badge badge-green">SUPERADO (1ms)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECCIÓN 7: CONCLUSIONES -->
+    <div class="section-title">7. Conclusiones y Cumplimiento Normativo</div>
+    <div class="card">
+      <p>La arquitectura del <strong>Pestillo Inteligente IoT</strong> alcanza el estado de producción académica y operativa plena. La integración de los estándares de ciberseguridad industrial (<strong>IEC 62443</strong> para comportamiento fail-secure del actuador mecánico, <strong>ISO/IEC 27400</strong> para el cifrado AES-256-GCM, y <strong>NIST SP 800-63B</strong> para la gestión estricta de credenciales y prevención de ataques de repetición) garantiza una solución blindada tanto a nivel de hardware distribuido en los microcontroladores ESP32 como en la aplicación móvil Android en Compose.</p>
+    </div>
+
+  </div>
 </body>
 </html>
