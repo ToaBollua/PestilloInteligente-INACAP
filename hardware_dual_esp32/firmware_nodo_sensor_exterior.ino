@@ -51,6 +51,18 @@ const int UMBRAL_DISTANCIA_CM = 8;             // Distancia de disparo (< 8 cm)
 // ==========================================
 // 🛰️ 3. CALLBACK DE ESTADO DE ENVÍO ESP-NOW
 // ==========================================
+#include <esp_arduino_version.h>
+
+#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
+void OnDataSent(const esp_now_send_info_t *tx_info, esp_now_send_status_t status) {
+  Serial.print("📡 [ESP-NOW TRANSMISIÓN] Estado del paquete: ");
+  if (status == ESP_NOW_SEND_SUCCESS) {
+    Serial.println("✅ ENTREGADO CON ÉXITO (ACK Recibido)");
+  } else {
+    Serial.println("⚠️ ERROR DE ENTREGA (Sin receptor o fuera de rango)");
+  }
+}
+#else
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("📡 [ESP-NOW TRANSMISIÓN] Estado del paquete: ");
   if (status == ESP_NOW_SEND_SUCCESS) {
@@ -59,6 +71,7 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
     Serial.println("⚠️ ERROR DE ENTREGA (Sin receptor o fuera de rango)");
   }
 }
+#endif
 
 // ==========================================
 // ⚙️ 4. CONFIGURACIÓN INICIAL (SETUP)

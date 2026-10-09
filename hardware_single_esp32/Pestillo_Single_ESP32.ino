@@ -183,7 +183,7 @@ void loop() {
       if (tcpClient) tcpClient.stop();
       tcpClient = tcpServer.available();
       Serial.print("📱 [TCP GATEWAY] Nueva conexión desde App Android: ");
-      Serial.println(tcpClient.peerIP());
+      Serial.println(tcpClient.remoteIP());
     }
   }
 
