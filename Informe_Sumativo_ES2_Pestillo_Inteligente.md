@@ -1,7 +1,7 @@
 # INFORME TÉCNICO SUMATIVO U2 // SISTEMA DE PESTILLO INTELIGENTE IOT
 **Asignatura:** Aplicaciones Móviles para IoT (TI3042) — INACAP  
 **Evaluación:** Evaluación Sumativa 2 (ES2 - Unidad 2)  
-**Integrantes:** Camilo Núñez, Diego Ibeas, Bollua (El Arquitecto)  
+**Integrantes:** Nicolás Anrique, Camilo Núñez, Diego Ibeas  
 **Repositorio Oficial:** [https://github.com/ToaBollua/PestilloInteligente-INACAP](https://github.com/ToaBollua/PestilloInteligente-INACAP.git) (Rama `master`)  
 **Estado:** 15/15 Pruebas Unitarias Aprobadas (100%) | `app-debug.apk` Generado
 
