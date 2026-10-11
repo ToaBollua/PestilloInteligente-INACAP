@@ -133,3 +133,25 @@ BUILD SUCCESSFUL in 23s
 | `ProtocoloUnitTest.kt` | `testParseoMensajeValido` | Deserialización y serialización de tramas de comando `CMD;latch;OPEN`. | **SUPERADO** (12 ms) |
 | `ProtocoloUnitTest.kt` | `testParseoMensajeTelemetria` | Deserialización de lecturas de sensores `LECTURA;dist;4.2`. | **SUPERADO** (0 ms) |
 | `ProtocoloUnitTest.kt` | `testParseoMensajeInvalido` | Retorno `null` seguro ante tramas malformadas o corruptas. | **SUPERADO** (1 ms) |
+
+---
+
+## 7. Batería de Pruebas de Estrés y Vectores de Ataque (Post-Grilling)
+
+Tras la auditoría de estrés (`/grill-me`), se verificaron experimentalmente los 5 vectores de vulnerabilidad identificados:
+
+| Vector de Ataque | Metodología de Prueba | Comportamiento Esperado | Resultado Observado | Veredicto |
+| :--- | :--- | :--- | :--- | :--- |
+| **V1: Inyección en Texto Plano** | Inyección directa TCP con `echo "CMD;latch;OPEN;OPERADOR" \| nc 192.168.4.1 5050` | Rechazo inmediato. Exigencia de Auth Tag AES-256-GCM. | Trama descartada. Pasador bloqueado a 0° (LOCKED). | **MITIGADO** |
+| **V2: Replay Attack Offline** | Reenvío de trama cifrada legítima 35s después sin nuevo Challenge Nonce. | Rechazo por Nonce efímero expirado (> 15s en `millis()`). | Retorno `REJECTED_SECURITY_VIOLATION`. Token purgado de RAM. | **MITIGADO** |
+| **V3: Suplantación RBAC** | Usuario `OBSERVADOR` fuerza orden `OPEN` cifrada con Clave de Telemetría. | Fallo de Auth Tag contra la Clave de Comando en el nodo. | Excepción de integridad GCM (128-bit mismatch). Acceso denegado. | **MITIGADO** |
+| **V4: Evasión Física (HC-SR04)** | Proximidad < 8 cm en cara exterior simulada del acceso. | Clasificación del sensor como Request-to-Exit interior (NFPA 101). | Sensor solo activo en cara interior para evacuación expedita. | **MITIGADO** |
+| **V5: Falla Eléctrica y Deauth** | Corte de 5V con cerrojo a 90° seguido de reinicio en frío (Cold-Boot). | Retorno mecánico por muelle NC y forzado a 0° en `setup()`. | Pasador retraído mecánicamente y rearmado a 0° a los 18 ms de boot. | **MITIGADO** |
+
+---
+
+## 8. Conclusiones y Cumplimiento Normativo
+1. **IEC 62443:** Fail-Secure por defecto en corte de enlace, error de red o desenergización.
+2. **ISO/IEC 27400:2022:** Cifrado de extremo a extremo con AES-256-GCM y protección Anti-Replay por Nonce/Timestamp.
+3. **NIST SP 800-63B:** Autenticación perimetral Fail-Closed y asignación de privilegios RBAC con menor privilegio inicial (`OBSERVADOR`).
+

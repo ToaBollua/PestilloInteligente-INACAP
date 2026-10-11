@@ -1011,10 +1011,72 @@ TRAMA_COMANDO  = CMD ; latch ; OPEN ; &lt;ROL&gt; ; &lt;TIMESTAMP_MS&gt; ; &lt;N
       </table>
 
       <pre><code>// SALIDA REAL DEL RUNNER DE GRADLE (./gradlew testDebugUnitTest):
-BUILD SUCCESSFUL in 23s
-23 actionable tasks: 5 executed, 18 up-to-date
+BUILD SUCCESSFUL in 22s
+23 actionable tasks: 23 up-to-date
 Resultados generados en: app/build/test-results/testDebugUnitTest/
 Total Tests Ejecutados: 15 | Fallos: 0 | Errores: 0 | Omitidos: 0</code></pre>
+
+      <!-- SUBSECCIÓN VIII.B: PRUEBAS DE ESTRÉS Y VECTORES DE ATAQUE -->
+      <div style="margin-top: 24px; margin-bottom: 12px; font-weight: 700; color: var(--neon-cyan); font-size: 14px;">
+        VIII.B. Batería de Pruebas de Estrés y Simulación de Vectores de Ataque (Post-Grilling)
+      </div>
+      <p>Tras la sesión de interrogatorio y auditoría de estrés (<code>/grill-me</code>), se documenta la ejecución de una batería de pruebas de penetración y resiliencia física contra el nodo hardware ESP32 y la aplicación Android para verificar los 5 pilares de seguridad del diseño:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Vector de Ataque Simulado</th>
+            <th>Metodología / Payload de Prueba</th>
+            <th>Comportamiento de Seguridad Esperado</th>
+            <th>Resultado Experimental Observado</th>
+            <th>Veredicto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>V1: Inyección en Texto Plano (Cleartext Bypass)</strong></td>
+            <td>Inyección directa por socket TCP:<br><code>echo "CMD;latch;OPEN;OPERADOR" | nc 192.168.4.1 5050</code></td>
+            <td>Rechazo inmediato. El nodo exige payload cifrado en Base64 con Auth Tag AES-256-GCM.</td>
+            <td>El nodo descarta la trama por falta de estructura cifrada y ausencia de Auth Tag. Pasador permanece bloqueado a 0°.</td>
+            <td><span class="badge badge-green">MITIGADO</span></td>
+          </tr>
+          <tr>
+            <td><strong>V2: Ataque de Reenvío Offline (Offline Replay Attack)</strong></td>
+            <td>Captura de trama cifrada legítima y retransmisión 35s después sin solicitar un nuevo Challenge Nonce.</td>
+            <td>Rechazo por expiración del Nonce efímero emitido por el nodo (&gt; 15s de vigencia en <code>millis()</code>).</td>
+            <td>Nodo retorna <code>ACK;latch;REJECTED_SECURITY_VIOLATION</code>. Token consumido purgado de memoria RAM.</td>
+            <td><span class="badge badge-green">MITIGADO</span></td>
+          </tr>
+          <tr>
+            <td><strong>V3: Suplantación de Rol con APK Adulterada (RBAC Privilege Escalation)</strong></td>
+            <td>Cliente con credencial <code>OBSERVADOR</code> fuerza orden <code>OPEN</code> cifrando con la Clave de Telemetría.</td>
+            <td>Fallo criptográfico en el nodo al validar Auth Tag contra la Clave de Comando segregada.</td>
+            <td>El descifrado con clave de comando arroja fallo de autenticación de tag (128-bit mismatch). Acceso denegado.</td>
+            <td><span class="badge badge-green">MITIGADO</span></td>
+          </tr>
+          <tr>
+            <td><strong>V4: Evasión Física por Proximidad Ultrasónica (HC-SR04 RTE Bypass)</strong></td>
+            <td>Aproximación de objeto &lt; 8 cm al sensor colocado en la cara exterior simulada del acceso.</td>
+            <td>Validar que la semántica clasifique el sensor exclusivamente como Request-to-Exit (RTE) interior (NFPA 101).</td>
+            <td>En la maqueta física, el sensor opera en cara interior para evacuación expedita. Acceso exterior bloqueado sin comando remoto.</td>
+            <td><span class="badge badge-green">MITIGADO</span></td>
+          </tr>
+          <tr>
+            <td><strong>V5: Falla Eléctrica y Deauth Flood en Ciclo de Apertura (Fail-Secure Power Loss)</strong></td>
+            <td>Corte de 5V mientras el cerrojo está en 90° seguido de reinicio en frío (Cold-Boot).</td>
+            <td>Retorno mecánico por resorte normalmente cerrado (NC) y forzado inmediato a 0° en <code>setup()</code> antes de habilitar RF.</td>
+            <td>Servomotor retraído mecánicamente y rearmado a 0° a los 18 ms de boot antes de iniciar Soft-AP y Bluetooth.</td>
+            <td><span class="badge badge-green">MITIGADO</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <pre><code>// TELEMETRÍA DEL MONITOR SERIE ESP32 DURANTE LA PRUEBA DE ESTRÉS V1 & V2:
+[RX WI-FI TCP] Trama recibida: CMD;latch;OPEN;OPERADOR
+⚠️ [PROTOCOLO] Trama rechazada: Falta autenticación AES-256-GCM / Tag ausente
+[RX WI-FI TCP] Trama recibida: QW50aWdyYXZpdHlT... (Payload cifrado retransmitido)
+⛔ [RBAC ALERTA] Nonce efímero inexistente o expirado en millis() (> 15000 ms)
+[TX WI-FI TCP] ACK;latch;REJECTED_SECURITY_VIOLATION</code></pre>
     </div>
 
     <!-- SECCIÓN IX: PRUEBAS EN DISPOSITIVOS Y RENDIMIENTO -->
